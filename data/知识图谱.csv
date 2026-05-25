@@ -1,0 +1,8 @@
+source,relation,target,source_label,target_label
+伍凯桃,从事,互联网,person,work
+伍凯桃,毕业于,华南农业大学,person,school
+张三,归属,工程部,person,department
+张三,上级,伍凯桃,person,person
+李四,所在地,天津,person,location
+张三,同乡,李四,person,person
+李四,职称,科学家,person,staff

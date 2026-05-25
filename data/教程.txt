@@ -1,0 +1,10 @@
+小龙虾(openclaw)安装步骤如下：
+step1. 管理员身份执行Windows PowerShell命令：Set-ExecutionPolicy RemoteSigned -Scope CurrentUser
+step2. 管理员身份执行Windows PowerShell命令：Set-ExecutionPolicy -Scope Process -ExecutionPolicy Bypass
+step3. 管理员身份执行Windows PowerShell命令下载安装openclaw：iwr -useb https://openclaw.ai/install.ps1 | iex
+step4. 管理员身份执行Windows PowerShell命令配置openclaw(配置需大模型api-key)：openclaw onboard --install-daemon
+step5. 管理员身份执行Windows PowerShell命令：openclaw dashboard
+step6. 浏览器访问：http://127.0.0.1:18789/overview
+
+图文问题解决可问豆包：
+https://www.doubao.com/chat/
