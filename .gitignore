@@ -1,0 +1,8 @@
+# 环境变量文件
+.env
+.env.*
+!.env.example
+
+# 其他敏感文件
+*.key
+*.pem
