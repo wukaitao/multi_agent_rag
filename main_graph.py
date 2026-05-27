@@ -1,7 +1,7 @@
 import os
 from langgraph.graph import StateGraph, END
 from langgraph.checkpoint.memory import MemorySaver
-from agents.supervisor_agent import AgentState, supervisor_node
+from agents.supervisor_agent import AgentState, semantic_supervisor_node
 from agents.rag_agent import rag_agent_node
 from agents.multimodal_agent import multimodal_agent_node
 from agents.tool_agent import tool_agent_node
@@ -16,7 +16,7 @@ def route_node(state: AgentState):
 # 构建流程图
 workflow = StateGraph(AgentState)
 # 添加节点
-workflow.add_node("supervisor", supervisor_node)
+workflow.add_node("supervisor", semantic_supervisor_node) # 使用语义路由
 workflow.add_node("rag", rag_agent_node)
 workflow.add_node("multimodal", multimodal_agent_node)
 workflow.add_node("tool", tool_agent_node)

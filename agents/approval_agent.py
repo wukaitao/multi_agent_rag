@@ -22,11 +22,14 @@ def approval_agent_node(state: Dict[str, Any]) -> Dict[str, Any]:
     - 其他审批: 使用企业级审批流程(Sqlite)
     """
     query = state["query"]
-    pending_delete = state.get("pending_delete", False)
 
     # 判断是否是删除知识图谱操作
-    delete_keywords = ["删除知识图谱", "清除知识图谱", "清空知识图谱", "删除所有数据", "清空数据库"]
-    is_delete_kg = pending_delete or any(kw in query for kw in delete_keywords)
+    delete_keywords = [
+        "删除知识图谱", "清除知识图谱", "清空知识图谱",
+        "删除所有数据", "清空数据库", "重置知识库",
+        "删除图谱", "清除图谱"
+    ]
+    is_delete_kg = any(kw in query for kw in delete_keywords)
 
     # 判断是否是审批操作(通过/驳回/转交等)
     aciton_keywords = ["通过", "驳回", "转交", "审批"]

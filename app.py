@@ -1,5 +1,4 @@
 import streamlit as st
-import asyncio
 from main_graph import graph
 from database.chroma_conn import upload_file_to_vector
 from database.neo4j_conn import batch_create_triples, batch_import_triples_with_fixed_format, build_kg_from_document
@@ -8,12 +7,14 @@ from core.memory_manager import get_long_memory
 from core.optimizer import kg_input_format
 from agents.component.approval_workflow_agent import get_approval_engine
 from langgraph.types import Command
-from langgraph.errors import GraphInterrupt
-import sqlite3
 import os
 import re
+import uvicorn
+import threading
 from dotenv import load_dotenv
 from config import *
+# 导入网关应用
+from hermes.hermes_integration import get_hermes_multi_agent_bridge
 
 # 加载环境配置
 load_dotenv()
@@ -58,8 +59,7 @@ def run_graph_with_config(user_input: str, username: str, token: str, thread_id:
                 "image": "",
                 "reference": "",
                 "response": "",
-                "route": "",
-                "pending_delete": False
+                "route": ""
             }, config=config)
 
             # 检查是否触发了 interrupt
@@ -82,16 +82,29 @@ def run_graph_with_config(user_input: str, username: str, token: str, thread_id:
             return {"response": f"需要人工确认: 是否执行删除知识图谱操作?\n\n请在输入框中输入[确认删除]或[取消操作]"}
         else:
             return {"response": f"执行失败: {error_msg}", "route": "end"}
+        
+def start_gateway():
+    """在后台启动 Hermes 网关"""
+    uvicorn.run(get_hermes_multi_agent_bridge().create_gateway_app(), host="0.0.0.0", port=8001)
 
 # ========== UI 界面 ==========
 tab1, tab2, tab3, tab4, tab5 = st.tabs(["智能问答", "资料上传", "多模态", "审批后台", "记忆中"])
 
 # 侧边栏
 with st.sidebar:
-    st.header("安全鉴权")
+    st.header("安全鉴权/网关控制")
     token = st.text_input("Token密钥", type="password", value="admin2026ai")
     username = st.text_input("用户名", value="admin")
     st.divider()
+
+    if st.button("启动 Hermes 网关"):
+        # 在新线程中启动网关
+        gateway_thread = threading.Thread(target=start_gateway, daemon=True)
+        gateway_thread.start()
+        st.success("Hermes 网关已启动(端口: 8001)")
+        st.info("支持微信/钉钉/飞书/Telegram接入")
+        st.caption("网关端点: http://localhost:8001/webhook/{platform}")
+        st.caption("API端点: http://localhost:8001/api/chat")
 
     st.warning("已实现: 鉴权|脱敏|熔断|降级|清洗|优化|人机协同|企业级审批流程")
 
@@ -261,10 +274,6 @@ with tab4:
     else:
         st.subheader(f"审批流程配置")
         st.info("审批人配置、流程定义等功能开发中")
-    # conn = sqlite3.connect(MEMORY_DB)
-    # data = conn.execute("SELECT * FROM approval_main").fetchall()
-    # st.table(data)
-    # conn.close()
 
 # 5. 记忆中心
 with tab5:

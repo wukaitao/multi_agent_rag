@@ -700,7 +700,6 @@ def handle_workflow_submit(state: Dict[str, Any]) -> Dict[str, Any]:
         flow_type=flow_type,
         biz_data={"query": query, "source": "智能问答"}
     )
-    print("aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa")
 
     if result["success"]:
         res = f"""
