@@ -33,6 +33,11 @@ if st.session_state.get('need_refresh', False):
     st.session_state['need_refresh'] = False
     st.rerun()
 
+# Gateway | FastAPI 实例
+bridge = get_hermes_multi_agent_bridge()
+gateway_app = bridge.create_gateway_app()
+fastapi_app = bridge.create_fastapi_app()
+
 def run_graph_with_config(user_input: str, username: str, token: str, thread_id: str):
     """运行图, 支持 interrupt 恢复"""
     config = {
@@ -85,7 +90,8 @@ def run_graph_with_config(user_input: str, username: str, token: str, thread_id:
         
 def start_gateway():
     """在后台启动 Hermes 网关"""
-    uvicorn.run(get_hermes_multi_agent_bridge().create_gateway_app(), host="0.0.0.0", port=8001)
+    uvicorn.run(fastapi_app, host="0.0.0.0", port=8000)
+    uvicorn.run(gateway_app, host="0.0.0.0", port=8001)
 
 # ========== UI 界面 ==========
 tab1, tab2, tab3, tab4, tab5 = st.tabs(["智能问答", "资料上传", "多模态", "审批后台", "记忆中"])
@@ -97,14 +103,23 @@ with st.sidebar:
     username = st.text_input("用户名", value="admin")
     st.divider()
 
+    if st.button("生成 SKILL.md 文件"):
+        output_dir = "~/.hermes/skills"
+        bridge.generate_skill_md_files(output_dir)
+        st.success("SKILL.md 文件成功生成, 可在 Hermes Agent 通过 '/skill' 查询")
     if st.button("启动 Hermes 网关"):
         # 在新线程中启动网关
         gateway_thread = threading.Thread(target=start_gateway, daemon=True)
         gateway_thread.start()
         st.success("Hermes 网关已启动(端口: 8001)")
-        st.info("支持微信/钉钉/飞书/Telegram接入")
+        st.info("支持Hermes/微信/钉钉/飞书/Telegram接入")
+        st.caption("Hermes 端点: http://localhost:8001/api/skill/{skill_name}")
+        st.caption("Hermes 端点: http://localhost:8001/api/skill/skills")
         st.caption("网关端点: http://localhost:8001/webhook/{platform}")
         st.caption("API端点: http://localhost:8001/api/chat")
+        st.caption("API端点: http://localhost:8001/health")
+        st.caption("LangGraph API端点: http://localhost:8000/api/chat")
+        st.caption("LangGraph API端点: http://localhost:8000/health")
 
     st.warning("已实现: 鉴权|脱敏|熔断|降级|清洗|优化|人机协同|企业级审批流程")
 

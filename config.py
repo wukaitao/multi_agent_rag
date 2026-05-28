@@ -50,6 +50,9 @@ RETRIEVER_CONFIG = {
     "hybrid_search_alpha": 0.7           # 混合检索向量权重
 }
 
+# FastAPI
+ANGET_API_URL = "http://localhost:8000/api/chat"
+
 # KG 增强版 Prompt
 UNIVERSAL_HIGH_PRECISION_PROMPT = """你是专业通用知识图谱三元组抽取专家，擅长从任意非结构化文本中精准提取高质量实体与语义关系。
     你必须严格遵守以下所有规则，不允许随意发挥、不允许编造、不允许偷懒：
