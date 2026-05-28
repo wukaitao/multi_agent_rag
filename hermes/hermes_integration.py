@@ -220,6 +220,7 @@ class HermesMultiAgentBridge:
                     "image": result.get("image")
                 }
             else:
+                print("666666666666")
                 return {
                     "response": f"API 调用失败: {response.status_code}"
                 }
@@ -433,6 +434,7 @@ Content-Type: application/json
         # ========== 供 Hermes Agent 接入 ==========
         @app.post("/api/skill/{skill_name}")
         async def execute_skill(skill_name: str, request: SkillRequest):
+            print("1111111111111111111111")
             """执行技能端点"""
             result = self.execute_skill(
                 skill_name=skill_name,
@@ -465,10 +467,11 @@ Content-Type: application/json
         @app.post("/api/chat")
         async def chat_endpoint(request: ChatRequest):
             """供 Hermes 调用的 API 端点"""
+            print("8888888888888888888666666666666666666")
             user_id = request.user_id
             message = request.message
             thread_id = request.thread_id
-            result = self._process_message_sync(user_id, message)
+            result = await self._process_message_sync(user_id, message)
             return {
                 "response": result.get("response", ""),
                 "image": result.get("image")
@@ -480,7 +483,9 @@ Content-Type: application/json
             return {
                 "status": "ok"
             }
-
+        
+        self.app = app
+        return app
 
     async def _process_message(self, user_id: str, message: str, platform: str):
         """异步处理消息"""
