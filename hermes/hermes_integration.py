@@ -14,6 +14,7 @@ from fastapi import FastAPI, Request, HTTPException, BackgroundTasks
 from pydantic import BaseModel
 from contextlib import asynccontextmanager
 from llama_index.llms.ollama import Ollama
+from agents.component.approval_database_agent import handle_delete_kg
 from config import *
 
 # ========== 导入你的现有系统 ==========
@@ -147,7 +148,9 @@ class HermesMultiAgentBridge:
                 },
                 "warning": "此操作不可恢复, 必须要求用户二次确认后才能执行",
                 "examples": [
-                    {"confirm": True}
+                    {},
+                    {"confirm": True},
+                    {"confirm": False}
                 ],
                 "route": "approval"
             }
@@ -179,9 +182,8 @@ class HermesMultiAgentBridge:
         # 根据技能类型构造查询
         if skill_name == "rag_query":
             state["query"] = params.get("query", "")
-        elif skill_name == "mulimodal_generate":
-            state["query"] = f"生成图 {params.get('prompt', '')}"
-            state["route"] = "multimodal"
+        elif skill_name == "multimodal_generate":
+            state["query"] = f"生成图 {params.get("prompt", "")}"
         elif skill_name == "approval_submit":
             req_type = params.get("type", "general")
             state["query"] = params.get("content", "")
@@ -191,12 +193,12 @@ class HermesMultiAgentBridge:
             comment = params.get("comment", "")
             state["query"] = f"{action} {req_id} {comment}"
         elif skill_name == "delete_knowledge_graph":
-            if params.get("confirm"):
-                state["query"] = "删除知识图谱"
-            else:
-                state["query"] = None
-                state["response"] = "删除操作已取消, 需要确认才能执行."
+            result = handle_delete_kg(params, context)
+            return {
+                "response": result.get("response", "")
+            }
 
+        print(f"state:\n{state}")
         if not state.get("query"):
             return {"response": f"无法处理技能 {skill_name}, 请检查参数"}
         
@@ -338,7 +340,7 @@ Content-Type: application/json
         from_skill = state.get("from_skill", None)
         route = state.get("route", "")
         if from_skill and route:
-            print(f"跳过语义路由, 使用预设路由from-skill: {from_skill} - {route}")
+            print(f"跳过语义路由, 使用预设路由from_skill: {from_skill} -> {route}")
             return state["route"]
         
         # ========== 语义路由 ==========

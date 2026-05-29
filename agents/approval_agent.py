@@ -36,11 +36,14 @@ def approval_agent_node(state: Dict[str, Any]) -> Dict[str, Any]:
     is_approval_action = any(kw in query for kw in aciton_keywords) and "REQ" in query
 
     if is_delete_kg:
+        print("aaaaaaaaaaaaaa")
         # 删除知识图谱 Human-in-Loop
         return handle_delete_kg_human_in_loop(state)
     elif is_approval_action:
+        print("bbbbbbbbbb")
         # 处理审批动作
         return handle_workflow_approval(state)
     else:
+        print("ccccccccccc")
         # 普通审批流程
         return handle_workflow_submit(state)

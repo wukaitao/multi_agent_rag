@@ -8,14 +8,14 @@ import re
 @circuit_breaker
 def rag_agent_node(state):
     """优化版RAG节点: 多查询融合 + 重排序 + 上下文扩展"""
-    q = state["query"]
+    query = state["query"]
 
     # === 1. 查询优化: 多角度检索向量 ===
-    expanded_queries = expand_query(q) # 生成同义词查询
+    expanded_queries = expand_query(query) # 生成同义词查询
     all_vec_results = []
 
     # 多查询融合
-    for query in [q] + expanded_queries[:2]:    # 限制数量
+    for query in [query] + expanded_queries[:2]:    # 限制数量
         vec_res = vector_search(query, top_k=5) # 增加找回数量
         all_vec_results.extend(vec_res)
 
@@ -27,13 +27,13 @@ def rag_agent_node(state):
             unique_results[doc_id] = res
 
     # 重排序(使用RRF或余弦相似度)
-    reranked_results = vector_search_with_rerank(q, list(unique_results.values()))
+    reranked_results = vector_search_with_rerank(query, list(unique_results.values()))
     top_results = reranked_results[:5]
     print(f"向量检索: 召回 {len(all_vec_results)} 条, 重排后保留 {len(top_results)} 条")
 
     # === 2. 知识图谱检索增强 ===
-    kg_res = kg_search(q)
-    kg_context = kg_search_with_context(q) # 获取邻居节点上下文
+    kg_res = kg_search(query)
+    kg_context = kg_search_with_context(query) # 获取邻居节点上下文
 
     # === 3. 构建结构化上下文 ===
     # 向量检索内容(带分数和来源)
@@ -65,7 +65,7 @@ def rag_agent_node(state):
     {kg_context_str}
 
     ## 用户问题
-    {q}
+    {query}
 
     ## 回答要求
     1. **优先级**: 知识图谱事实 > 高置信度向量 > 中低置信度向量

@@ -219,6 +219,14 @@ def update_log_to_sqlite(request_id: str, status: str = ""):
     conn.commit()
     conn.close()
 
+def get_log_from_user(user: str, flow_type: str = "delete_kg", status: str = "待审批"):
+    """获取用户的审批日志"""
+    conn = sqlite3.connect(MEMORY_DB)
+    conn.row_factory = sqlite3.Row
+    c = conn.cursor()
+    c.execute("SELECT * FROM approval_main WHERE user = ? AND flow_type = ? AND status = ? ORDER BY created_at DESC", (user, flow_type, status))
+    return [dict(row) for row in c.fetchall()]
+
 # ========== 审批引擎核心类 ==========
 class ApprovalEngine:
     """审批流程引擎"""
