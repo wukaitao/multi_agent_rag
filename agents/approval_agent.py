@@ -32,7 +32,7 @@ def approval_agent_node(state: Dict[str, Any]) -> Dict[str, Any]:
     is_delete_kg = any(kw in query for kw in delete_keywords)
 
     # 判断是否是审批操作(通过/驳回/转交等)
-    aciton_keywords = ["通过", "驳回", "转交", "审批"]
+    aciton_keywords = ["通过", "驳回", "转交", "审批", "approve", "reject", "transfer"]
     is_approval_action = any(kw in query for kw in aciton_keywords) and "REQ" in query
 
     if is_delete_kg:

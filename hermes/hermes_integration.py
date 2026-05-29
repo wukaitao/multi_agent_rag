@@ -27,9 +27,10 @@ class SkillRequest(BaseModel):
     context: Dict[str, Any] = {}
 
 class ChatRequest(BaseModel):
-    user_id: str
-    message: str
+    user: str
+    query: str
     thread_id: str = "default"
+    from_skill: str = None
 
 # ========== 集成层 ==========
 class HermesMultiAgentBridge:
@@ -66,22 +67,24 @@ class HermesMultiAgentBridge:
                     {"query": "伍凯桃是谁"},
                     {"query": "介绍中山市"},
                     {"query": "什么是RAG"}
-                ]
+                ],
+                "route": "rag"
             },
             "multimodal_generate": {
                 "name": "multimodal_generate",
                 "description": "生成图片、理解图片内容. 支持文生图、图生文.",
                 "parameters": {
-                    "query": {
+                    "prompt": {
                         "type": "string",
                         "description": "图片描述或生成指令",
                         "required": True
                     }
                 },
                 "examples": [
-                    {"query": "生成一只可爱的柴犬"},
-                    {"query": "画一幅山水画"}
-                ]
+                    {"prompt": "生成一只可爱的柴犬"},
+                    {"prompt": "画一幅山水画"}
+                ],
+                "route": "multimodal"
             },
             "approval_submit": {
                 "name": "approval_submit",
@@ -94,19 +97,20 @@ class HermesMultiAgentBridge:
                     },
                     "type": {
                         "type": "string",
-                        "description": "申请类型: leave(请假)/expense(报销)/project(项目)",
+                        "description": "申请类型 - leave(请假)/expense(报销)/project(项目)",
                         "required": False,
                         "default": "general"
                     }
                 },
                 "examples": [
-                    {"query": "我想请3天年假", "type": "leave"},
-                    {"query": "报销差旅费500元", "type": "expense"}
-                ]
+                    {"content": "我想请3天年假", "type": "leave"},
+                    {"content": "报销差旅费500元", "type": "expense"}
+                ],
+                "route": "approval"
             },
             "approval_handle": {
                 "name": "approval_handle",
-                "description": "处理审批: 通过、驳回或转交. 当用户作为审批人需要处理待办申请时使用.",
+                "description": "处理审批 - 通过、驳回或转交. 当用户作为审批人需要处理待办申请时使用.",
                 "parameters": {
                     "action": {
                         "type": "string",
@@ -120,14 +124,16 @@ class HermesMultiAgentBridge:
                     },
                     "comment": {
                         "type": "string",
-                        "description": "审批意见",
+                        "description": "审批意见|转交人",
                         "required": False
                     }
                 },
                 "examples": [
-                    {"action": "approval", "request_id": "REQ202412011200001"},
-                    {"action": "reject", "request_id": "REQ202412011200001", "comment": "理由不充分"}
-                ]
+                    {"action": "approve", "request_id": "REQ202412011200001"},
+                    {"action": "reject", "request_id": "REQ202412011200001", "comment": "理由不充分"},
+                    {"action": "transfer", "request_id": "REQ202412011200001", "comment": "张三"}
+                ],
+                "route": "approval"
             },
             "delete_knowledge_graph": {
                 "name": "delete_knowledge_graph",
@@ -141,8 +147,9 @@ class HermesMultiAgentBridge:
                 },
                 "warning": "此操作不可恢复, 必须要求用户二次确认后才能执行",
                 "examples": [
-                    {"confrim": True}
-                ]
+                    {"confirm": True}
+                ],
+                "route": "approval"
             }
         }
     
@@ -158,7 +165,7 @@ class HermesMultiAgentBridge:
         Args:
             skill_name: 技能名称(rag_query/multimodal_generate/approval_submit/approval_handle/delete_knowledge_graph等)
             params: 技能参数
-            context: Hermes 上下文, 包含 user_id, thread_id 等
+            context: Hermes 上下文, 包含 user, thread_id 等
         Returns:
             {"response": "回答内容", "image": "图片路径(可选)"}
         """
@@ -166,13 +173,7 @@ class HermesMultiAgentBridge:
         state = {
             "user": context.get("user", "hermes_user"),
             "token": SECRET_TOKEN,
-            "query": "",
-            "prompt": "",
-            "image": "",
-            "reference": "",
-            "response": "",
-            "route": "",
-            "pending_delete": False
+            "from_skill": skill_name
         }
 
         # 根据技能类型构造查询
@@ -180,10 +181,11 @@ class HermesMultiAgentBridge:
             state["query"] = params.get("query", "")
         elif skill_name == "mulimodal_generate":
             state["query"] = f"生成图 {params.get('prompt', '')}"
+            state["route"] = "multimodal"
         elif skill_name == "approval_submit":
             req_type = params.get("type", "general")
             state["query"] = params.get("content", "")
-        elif skill_name == "approve_handle":
+        elif skill_name == "approval_handle":
             action = params.get("action", "")
             req_id = params.get("request_id", "")
             comment = params.get("comment", "")
@@ -195,7 +197,7 @@ class HermesMultiAgentBridge:
                 state["query"] = None
                 state["response"] = "删除操作已取消, 需要确认才能执行."
 
-        if not state["query"]:
+        if not state.get("query"):
             return {"response": f"无法处理技能 {skill_name}, 请检查参数"}
         
         # 调用 LangGraph API
@@ -203,9 +205,10 @@ class HermesMultiAgentBridge:
             response = requests.post(
                 ANGET_API_URL,
                 json={
-                    "user_id": context.get("user", "hermes_user"),
-                    "message": state["query"],
-                    "thread_id": context.get("thread_id", "hermes_default"),
+                    "user": state["user"],
+                    "query": state["query"],
+                    "thread_id": context.get("thread_id", "hermes_default_thread"),
+                    "from_skill": state["from_skill"]
                 },
                 headers={
                     "Authorization": f"Bearer {SECRET_TOKEN}"
@@ -270,10 +273,10 @@ version: 1.0.0
 POST http://localhost:8001/api/skill/{skill_name}
 Content-Type: application/json
 {{
-    "skill": "{skill_name}".
-    "params": {self._format_params_json(skill_def.get("parameters", {}))},
+    "skill": "{skill_name}",
+    "params": {self._format_params_json(skill_def.get('parameters', {}))},
     "context": {{
-        "user": "{{user_id}}",
+        "user": "{{user}}",
         "thread_id": "{{thread_id}}"
     }}
 }}
@@ -320,7 +323,7 @@ Content-Type: application/json
         
         example = {}
         for name, info in params.items():
-            if info.get("tpye") == "string":
+            if info.get("type") == "string":
                 example[name] = f"<{name}>"
             elif info.get("type") == "boolean":
                 example[name] = False
@@ -329,8 +332,17 @@ Content-Type: application/json
         return json.dumps(example, ensure_ascii=False)
     
     # ========== 路径C: 语义路由 ==========
-    def semantic_router(self, query: str) -> str:
+    def semantic_router(self, state) -> str:
         """使用 LLM 进行语义路由, 替换关键词匹配"""
+        # ========== skill.md 进入则跳过 ==========
+        from_skill = state.get("from_skill", None)
+        route = state.get("route", "")
+        if from_skill and route:
+            print(f"跳过语义路由, 使用预设路由from-skill: {from_skill} - {route}")
+            return state["route"]
+        
+        # ========== 语义路由 ==========
+        query = state["query"]
         llm = Ollama(model=LLM_MODEL, temperature=0)
         prompt = f"""分析以下用户问题, 判断应该路由到哪个Agent.
         可选Agent:
@@ -353,7 +365,7 @@ Content-Type: application/json
         except:
             pass
 
-        # 降级: 关键词匹配
+        # ========== 降级: 关键词匹配 ==========
         if any(k in query for k in ["图片", "生成图", "画图"]):
             return "multimodal"
         elif any(k in query for k in ["知识", "文档", "资料", "是谁", "什么是"]):
@@ -397,23 +409,23 @@ Content-Type: application/json
 
             # 解析不同平台的消息格式
             if platform == "wechat":
-                user_id = data.get("FromUserName", "")
-                message = data.get("Content", "")
+                user = data.get("FromUserName", "")
+                query = data.get("Content", "")
             elif platform == "dingtalk":
-                user_id = data.get("senderStaffId", "")
-                message = data.get("text", {}).get("content", "")
+                user = data.get("senderStaffId", "")
+                query = data.get("text", {}).get("content", "")
             elif platform == "feishu":
-                user_id = data.get("sender", {}).get("sender_id", {}).get("user_id", "")
-                message = data.get("message", {}).get("content", "")
+                user = data.get("sender", {}).get("sender_id", {}).get("user_id", "")
+                query = data.get("message", {}).get("content", "")
             elif platform == "telegram":
-                user_id = str(data.get("message", {}).get("from", {}).get("id", ""))
-                message = data.get("message", {}).get("text", "")
+                user = str(data.get("message", {}).get("from", {}).get("id", ""))
+                query = data.get("message", {}).get("text", "")
             else:
-                user_id = data.get("user_id", "unknown")
-                message = data.get("message", "")
+                user = data.get("user_id", "unknown")
+                query = data.get("message", "")
 
             # 后台处理, 不阻塞
-            background_tasks.add_task(self._process_message, user_id, message, platform)
+            background_tasks.add_task(self._process_message, user, query, platform)
 
             # 立即返回(异步处理)
             return {
@@ -425,10 +437,10 @@ Content-Type: application/json
         async def chat_endpoint(request: Request):
             """HTTP API 端点, 供 Streamlit 等前端调用"""
             data = await request.json()
-            user_id = data.get("user_id", "web_user")
-            message = data.get("message", "")
+            user = data.get("user", "web_user")
+            query = data.get("query", "")
 
-            result =  await self._process_message_sync(user_id, message)
+            result =  await self._process_message_sync(user, query, "")
             return result
         
         # ========== 供 Hermes Agent 接入 ==========
@@ -468,10 +480,13 @@ Content-Type: application/json
         async def chat_endpoint(request: ChatRequest):
             """供 Hermes 调用的 API 端点"""
             print("8888888888888888888666666666666666666")
-            user_id = request.user_id
-            message = request.message
+            user = request.user
+            query = request.query
             thread_id = request.thread_id
-            result = await self._process_message_sync(user_id, message)
+            from_skill = request.from_skill
+            print("222222222")
+            result = await self._process_message_sync(user, query, thread_id, from_skill)
+            print(f"result:\n{result}")
             return {
                 "response": result.get("response", ""),
                 "image": result.get("image")
@@ -487,29 +502,22 @@ Content-Type: application/json
         self.app = app
         return app
 
-    async def _process_message(self, user_id: str, message: str, platform: str):
+    async def _process_message(self, user: str, query: str, platform: str):
         """异步处理消息"""
         try:
             # 语义路由
-            route = self.semantic_router(message)
+            # route = self.semantic_router(state)
 
             # 构建状态
-            thread_id = f"{platform}_{user_id}"
             state = {
-                "user": user_id,
+                "user": user,
                 "token": SECRET_TOKEN,
-                "query": message,
-                "prompt": "",
-                "image": "",
-                "reference": "",
-                "response": "",
-                "route": route,
-                "pending_delete": False
+                "query": query
             }
 
             config = {
                 "configurable": {
-                    "thread_id":  thread_id
+                    "thread_id":  f"{platform}_{user}"
                 }
             }
             result = self.graph.invoke(state, config=config)
@@ -517,30 +525,34 @@ Content-Type: application/json
             response = result.get("response", "处理完成")
 
             # 发送回复(根据平台格式)
-            await self._send_reply(platform, user_id, response)
+            await self._send_reply(platform, user, response)
         except Exception as e:
-            await self._send_reply(platform, user_id, f"处理失败: {str(e)}")
+            await self._send_reply(platform, user, f"处理失败: {str(e)}")
 
-    async def _process_message_sync(self, user_id: str, message: str) -> Dict:
+    async def _process_message_sync(self, user: str, query: str, thread_id: str = "default_id", from_skill: str = None) -> Dict:
         """同步处理消息(用于API)"""
         try:
-            route = self.semantic_router(message)
+            # route = self.semantic_router(state)
 
+            skill_def = self.get_skill_definition(from_skill)
+            if skill_def:
+                route = skill_def.get("route", "chat")
+            else:
+                route = "chat"
+            
             state = {
-                "user": user_id,
+                "user": user,
                 "token": SECRET_TOKEN,
-                "query": message,
-                "prompt": "",
-                "image": "",
-                "reference": "",
-                "response": "",
-                "route": route,
-                "pending_delete": False
+                "query": query,
+                "from_skill": from_skill,
+                "route": route
             }
+            print(f"from_skill:\n{state['from_skill']}")
+            print(f"route:\n{state['route']}")
 
             config = {
                 "configurable": {
-                    "thread_id":  f"api_{user_id}"
+                    "thread_id":  f"{thread_id}"
                 }
             }
             result = self.graph.invoke(state, config=config)

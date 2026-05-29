@@ -730,7 +730,7 @@ def handle_workflow_approval(state: Dict[str, Any]) -> Dict[str, Any]:
     user = state["user"]
     # 解析审批指令
     # 格式示例：通过 REQ202412011200001、驳回 REQ202412011200001 理由不充分
-    match = re.match(r'(通过|驳回|转交)\s+([A-Z0-9]+)\s*(.*)', query)
+    match = re.match(r'(通过|驳回|转交|approve|reject|transfer)\s+([A-Z0-9]+)\s*(.*)', query)
     if not match:
         state["response"] = "指令格式错误, 请使用: 通过 申请单号 [意见]"
         state["route"] = "end"
@@ -740,11 +740,11 @@ def handle_workflow_approval(state: Dict[str, Any]) -> Dict[str, Any]:
 
     engine = get_approval_engine()
 
-    if action == "通过":
+    if action == "通过" or action == "approve":
         result = engine.approve(request_id, user, comment)
-    elif action == "驳回":
+    elif action == "驳回" or action == "reject":
         result = engine.reject(request_id, user, comment)
-    elif action == "转交":
+    elif action == "转交" or action == "transfer":
         # 转交给其他人: 转交 REQ123 张三
         target = comment.split()[0] if comment else ""
         result = engine.transfer(request_id, user, target, comment)

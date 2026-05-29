@@ -110,10 +110,10 @@ with st.sidebar:
     st.divider()
 
     if st.button("生成 SKILL.md 文件"):
-        # output_dir = "~/.hermes/skills" # 本地主机 windows 目录
-        output_dir = r"\\wsl.localhost\Ubuntu\home\wukai\.hermes\skills" # 虚拟主机 WSL 目录
+        output_dir = "~/.hermes/skills" # 本地主机 windows 目录
+        # output_dir = r"\\wsl.localhost\Ubuntu\home\wukai\.hermes\skills" # 虚拟主机 WSL 目录
         bridge.generate_skill_md_files(output_dir)
-        st.success("SKILL.md 文件成功生成, 可在 Hermes Agent 通过 '/skill' 查询")
+        st.success("SKILL.md 文件成功生成, 可在 Hermes Agent 通过 '/skills list --source local' 查询")
     if st.button("启动 Hermes 网关"):
         if not gateway_running:
             # 在新线程中启动网关
