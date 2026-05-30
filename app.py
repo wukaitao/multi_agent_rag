@@ -15,6 +15,7 @@ from dotenv import load_dotenv
 from config import *
 # 导入网关应用
 from hermes.hermes_integration import get_hermes_multi_agent_bridge
+import sys
 
 # 加载环境配置
 load_dotenv()
@@ -110,9 +111,7 @@ with st.sidebar:
     st.divider()
 
     if st.button("生成 SKILL.md 文件"):
-        output_dir = "~/.hermes/skills" # 本地主机 windows 目录
-        # output_dir = r"\\wsl.localhost\Ubuntu\home\wukai\.hermes\skills" # 虚拟主机 WSL 目录
-        bridge.generate_skill_md_files(output_dir)
+        bridge.generate_skill_md_files(SKILL_PATH)
         st.success("SKILL.md 文件成功生成, 可在 Hermes Agent 通过 '/skills list --source local' 查询")
     if st.button("启动 Hermes 网关"):
         if not gateway_running:
@@ -124,7 +123,7 @@ with st.sidebar:
             st.success("Hermes 网关已启动(端口: 8001)")
             st.info("支持Hermes/微信/钉钉/飞书/Telegram接入")
             st.caption("Hermes 端点: http://localhost:8001/api/skill/{skill_name}")
-            st.caption("Hermes 端点: http://localhost:8001/api/skill/skills")
+            st.caption("Hermes 端点: http://localhost:8001/api/skills")
             st.caption("网关端点: http://localhost:8001/webhook/{platform}")
             st.caption("API端点: http://localhost:8001/api/chat")
             st.caption("健康检查: http://localhost:8001/health")
@@ -142,7 +141,7 @@ with st.sidebar:
         else:
             st.warning("FastAPI 业务接口已在运行中")
 
-    st.warning("已实现: 鉴权|脱敏|熔断|降级|清洗|优化|人机协同|企业级审批流程")
+    st.warning("已实现: 鉴权|脱敏|熔断|降级|清洗|优化|人机协同|企业级审批流程|接入Hermes Agent提问(SKILL.md生成&gateway网关&API接口&WSL环境和Docker环境调用宿主机Ollama、Sqlite、Neo4j)")
 
 # 1. 智能问答
 with tab1:
@@ -319,3 +318,32 @@ with tab5:
 
 st.divider()
 st.info("LangGraph多智能体|RAG混合检索(文档边界截断&强化Prompt&增加召回数&同义词检索&重排序)|知识图谱(邻居节点+关系)|多模态|工具调用|MPC审批|长短记忆|工程安全")
+
+# ========== 主入口 ==========
+if __name__ == "__main__":
+
+    if len(sys.argv) > 1:
+        if sys.argv[1] == "generate":
+            # 生成 SKILL.md 文件
+            output_dir = sys.argv[2] if len(sys.argv) > 2 else SKILL_PATH
+            bridge.generate_skill_md_files(output_dir)
+        elif sys.argv[1] == "gateway":
+            # 启动 API 服务
+            print("启动 Hermes Skill Bridge API 服务...")
+            print("Hermes 网关已启动(端口: 8001)")
+            print("支持Hermes/微信/钉钉/飞书/Telegram接入")
+            print("Hermes 端点: http://localhost:8001/api/skill/{skill_name}")
+            print("Hermes 端点: http://localhost:8001/api/skills")
+            print("网关端点: http://localhost:8001/webhook/{platform}")
+            print("API端点: http://localhost:8001/api/chat")
+            print("健康检查: http://localhost:8001/health")
+            uvicorn.run(gateway_app, host="0.0.0.0", port=8001)
+        elif sys.argv[1] == "serve":
+            print("FastAPI 业务接口已启动(端口: 8000)")
+            print("LangGraph API端点: http://localhost:8000/api/chat")
+            print("LangGraph 健康检查: http://localhost:8000/health")
+            uvicorn.run(fastapi_app, host="0.0.0.0", port=8000)
+        else:
+            print("用法:")
+            print("python hermes_integration.py generate [输出目录] # 生成 SKILL.md 文件")
+            print("python hermes_integration.py serve # 启动 API 服务")

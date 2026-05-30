@@ -10,7 +10,11 @@ import time
 from datetime import datetime
 
 asr_model = whisper.load_model("base")
-vl_llm = Ollama(model=VL_MODEL, temperature=0)
+vl_llm = Ollama(
+    model=VL_MODEL,
+    base_url=LLM_BASE_URL,
+    temperature=0
+)
 
 # 语音转文字
 def audio2text(audio_path):

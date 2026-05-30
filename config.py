@@ -1,17 +1,27 @@
 import os
+import sys
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
+
+# 环境判断
+def is_wsl():
+    """ 判断是否在 WSL2 环境"""
+    return sys.platform == "linux" and "microsoft" in os.uname().release.lower()
+def is_windows():
+    """ 判断是否在 Windows 环境"""
+    return sys.platform == "win32"
 
 # LLM 配置
 LLM_MODEL = "qwen3:0.6b"
 VL_MODEL = "gemma4:e2b"
 EMBED_MODEL = "mxbai-embed-large"
+LLM_BASE_URL = "http://localhost:11434" if not is_wsl() else "http://host.docker.internal:11434"
 
 # 知识图谱(Neo4j)
-NEO4J_URL = "bolt://127.0.0.1:7687"
+NEO4J_URL = "bolt://localhost:7687" if not is_wsl() else "bolt://192.168.18.104:7687"
 NEO4J_USER = "neo4j"
 NEO4J_PASSWORD = "12345678"
-# 向量数据库(ChromaDB)
-CHROMA_PATH = "./chroma_db"
+# 向量数据库(ChromaDB + SQLite3)
+CHROMA_PATH = "./chroma_db" if not is_wsl() else "/mnt/e/work/AIAgent/multi_agent_rag/chroma_db"
 
 # 安全配置
 SECRET_TOKEN = "admin2026ai"
@@ -23,8 +33,7 @@ DATA_PATH = "./data"
 TEMP_OPATH = "./temp"
 GRAPH_FILE_PATH = "./main_graph_flow.png"
 # 关系型数据库(SQLite3)
-MEMORY_PATH = "./memory"
-MEMORY_DB = "./memory/memory.db"
+MEMORY_DB = "./memory/memory.db" if not is_wsl() else "/mnt/e/work/AIAgent/multi_agent_rag/memory/memory.db"
 
 # ModelScope 配置
 MODELSCOPE_MODEL = "Qwen/Qwen-Image"
@@ -52,6 +61,9 @@ RETRIEVER_CONFIG = {
 
 # FastAPI
 ANGET_API_URL = "http://localhost:8000/api/chat"
+
+# SKILL 配置
+SKILL_PATH = "~/.hermes/skills" if False else r"\\wsl.localhost\Ubuntu\home\wukai\.hermes\skills"  # 根据实际环境调整
 
 # KG 增强版 Prompt
 UNIVERSAL_HIGH_PRECISION_PROMPT = """你是专业通用知识图谱三元组抽取专家，擅长从任意非结构化文本中精准提取高质量实体与语义关系。
@@ -88,4 +100,3 @@ UNIVERSAL_HIGH_PRECISION_PROMPT = """你是专业通用知识图谱三元组抽�
 
 os.makedirs(DATA_PATH, exist_ok=True)
 os.makedirs(TEMP_OPATH, exist_ok=True)
-os.makedirs(MEMORY_PATH, exist_ok=True)

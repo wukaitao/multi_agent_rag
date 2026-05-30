@@ -4,7 +4,10 @@ from llama_index.embeddings.ollama import OllamaEmbedding
 import chromadb
 from config import *
 
-Settings.embed_model = OllamaEmbedding(model_name=EMBED_MODEL)
+Settings.embed_model = OllamaEmbedding(
+    model_name=EMBED_MODEL,
+    base_url=LLM_BASE_URL
+)
 Settings.chunk_size = 500
 
 chroma_client = chromadb.PersistentClient(path=CHROMA_PATH)

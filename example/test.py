@@ -19,10 +19,12 @@ async def build_kg_from_document(file_path: str):
 
     # 2. 初始化 LLM 和 Embedding（必须用 neo4j-graphrag 的适配器）
     llm = OllamaLLM(
-        model_name=LLM_MODEL
+        model_name=LLM_MODEL,
+        base_url=LLM_BASE_URL
     )
     embedder = OllamaEmbeddings(
-        model=EMBED_MODEL
+        model=EMBED_MODEL,
+        base_url=LLM_BASE_URL
     )
 
     # 3. 构建知识图谱管道（所有必填参数必须完整）

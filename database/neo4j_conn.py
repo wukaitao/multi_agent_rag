@@ -81,7 +81,7 @@ class Neo4jConnection:
             session.run("MATCH (n) DETACH DELETE n")
 
     def _extract_entities(self, text: str) -> list:
-        print(f"==============================text:{text}==========")
+        print(f"=== text:{text} ===")
         """实体抽取(改进版)"""
         entities = []
 
@@ -89,7 +89,7 @@ class Neo4jConnection:
         chinese_names = re.findall(r"[\u4e00-\u9fa5]{2,4}(?:是|的|指|叫)", text)
         if chinese_names:
             entities.extend([name[:-1] for name in chinese_names])
-        print(f"==============================chinese_names:{chinese_names}==========")
+        print(f"=== chinese_names:{chinese_names} ===")
 
         # 2. 英文单词识别(首字母大写或全大写)
         english_entities = re.findall(r"\b[A-Z][a-z]+(?:\s+[A-Z][a-z]+)*\b", text)
@@ -99,7 +99,7 @@ class Neo4jConnection:
         words = text.split()
         potential_nouns = [w for w in words if len(w) > 1 and w.isalnum()]
         entities.extend(potential_nouns[:3])
-        print(f"==============================entities:{entities}==========")
+        print(f"=== entities:{entities} ===")
 
         # 去重
         return list(set(entities))[:5]
@@ -239,7 +239,10 @@ def build_kg_from_document(file_path: str):
     llm = OllamaLLM(
         model_name="deepseek-r1:1.5b"
     )
-    embed_model = OllamaEmbeddings(model=EMBED_MODEL)
+    embed_model = OllamaEmbeddings(
+        model=EMBED_MODEL,
+        base_url=LLM_BASE_URL
+    )
 
     system_instruction=UNIVERSAL_HIGH_PRECISION_PROMPT
 

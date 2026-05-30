@@ -21,6 +21,7 @@ def semantic_supervisor_node(state: AgentState) -> AgentState:
     语义路由版 supervisor_node
     替换原有的关键词匹配
     """
+    print(f"========== SUPERVISOR 节点 ==========")
     # 鉴权
     print(f"state:\n{state}")
     if not check_auth(state["token"]):

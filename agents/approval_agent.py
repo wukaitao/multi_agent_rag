@@ -9,7 +9,6 @@ from core.memory_manager import save_long_memory
 from core.security import data_desensitize
 from agents.component.approval_workflow_agent import *
 from agents.component.approval_database_agent import *
-from config import MEMORY_DB
 
 # ========== 初始化所有表 ==========
 init_apprval_tables()

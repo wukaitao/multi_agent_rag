@@ -8,7 +8,10 @@ from config import *
 import numpy as np
 from difflib import SequenceMatcher
 
-Settings.embed_model = OllamaEmbedding(model_name=EMBED_MODEL)
+Settings.embed_model = OllamaEmbedding(
+    model_name=EMBED_MODEL,
+    base_url=LLM_BASE_URL
+)
 Settings.chunk_size = 500
 
 chroma_client = chromadb.PersistentClient(path=CHROMA_PATH)

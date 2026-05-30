@@ -18,7 +18,7 @@ from agents.component.approval_database_agent import handle_delete_kg
 from config import *
 
 # ========== 导入你的现有系统 ==========
-from config import DATA_PATH, MEMORY_DB, SECRET_TOKEN, LLM_MODEL
+from config import SECRET_TOKEN, LLM_MODEL
 from database.neo4j_conn import _neo4j_conn
 
 class SkillRequest(BaseModel):
@@ -215,7 +215,7 @@ class HermesMultiAgentBridge:
                 headers={
                     "Authorization": f"Bearer {SECRET_TOKEN}"
                 },
-                timeout=60
+                timeout=180
             )
 
             if response.status_code == 200:
@@ -238,7 +238,7 @@ class HermesMultiAgentBridge:
                 "response": f"执行失败: {str(e)}"
             }
         
-    def generate_skill_md_files(self, output_dir: str = "~/.hermes/skills"):
+    def generate_skill_md_files(self, output_dir: str = SKILL_PATH):
         """
         为每个技能生成独立的 SKILL.md 文件
         Hermes 会自动扫描这个目录并加载技能
@@ -345,7 +345,11 @@ Content-Type: application/json
         
         # ========== 语义路由 ==========
         query = state["query"]
-        llm = Ollama(model=LLM_MODEL, temperature=0)
+        llm = Ollama(
+            model=LLM_MODEL,
+            base_url=LLM_BASE_URL,
+            temperature=0
+        )
         prompt = f"""分析以下用户问题, 判断应该路由到哪个Agent.
         可选Agent:
         - rag: 知识检索、文档回答、信息查询
@@ -448,6 +452,7 @@ Content-Type: application/json
         # ========== 供 Hermes Agent 接入 ==========
         @app.post("/api/skill/{skill_name}")
         async def execute_skill(skill_name: str, request: SkillRequest):
+            print(f"========== SKILL NAME 接口 节点 ==========")
             print("1111111111111111111111")
             """执行技能端点"""
             result = self.execute_skill(
@@ -481,6 +486,7 @@ Content-Type: application/json
         @app.post("/api/chat")
         async def chat_endpoint(request: ChatRequest):
             """供 Hermes 调用的 API 端点"""
+            print(f"========== 业务 API 接口 节点 ==========")
             print("8888888888888888888666666666666666666")
             user = request.user
             query = request.query
@@ -581,29 +587,3 @@ def get_hermes_multi_agent_bridge():
     """桥接器实例化"""
     from main_graph import graph
     return HermesMultiAgentBridge(graph)
-
-# ========== 主入口 ==========
-if __name__ == "__main__":
-    import sys
-
-    bridge = get_hermes_multi_agent_bridge()
-    app = bridge.create_gateway_app()
-    fastapi_app = bridge.create_fastapi_app()
-
-    if len(sys.argv) > 1:
-        if sys.argv[1] == "generate":
-            # 生成 SKILL.md 文件
-            output_dir = sys.argv[2] if len(sys.argv) > 2 else "~/.hermes/skills"
-            bridge.generate_skill_md_files(output_dir)
-        elif sys.argv[1] == "serve":
-            # 启动 API 服务
-            import uvicorn
-            print(f"启动 Hermes Skill Bridge API 服务...")
-            print("API 端点: http://localhost:8001/api/skill/{skill_name}")
-            print("健康检查: http://localhost:8001/health")
-            uvicorn.run(fastapi_app, host="0.0.0.0", port=8000)
-            uvicorn.run(app, host="0.0.0.0", port=8001)
-        else:
-            print("用法:")
-            print("python hermes_integration.py generate [输出目录] # 生成 SKILL.md 文件")
-            print("python hermes_integration.py serve # 启动 API 服务")

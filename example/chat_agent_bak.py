@@ -1,9 +1,13 @@
 from llama_index.llms.ollama import Ollama
-from config import LLM_MODEL
+from config import LLM_MODEL, LLM_BASE_URL
 from core.memory_manager import add_short_memory, get_short_memory, save_long_memory
 from core.security import data_desensitize, circuit_breaker
 
-llm = Ollama(model=LLM_MODEL, temperature=0)
+llm = Ollama(
+    model=LLM_MODEL,
+    base_url=LLM_BASE_URL,
+    temperature=0
+)
 
 @circuit_breaker
 def chat_agent_node(state):
