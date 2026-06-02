@@ -15,6 +15,7 @@ from pydantic import BaseModel
 from contextlib import asynccontextmanager
 from llama_index.llms.ollama import Ollama
 from agents.component.approval_database_agent import handle_delete_kg
+from database.sql.sql_clawbot import log_message_queue, get_message_queue
 from config import *
 
 # ========== 导入你的现有系统 ==========
@@ -404,10 +405,10 @@ Content-Type: application/json
             # 关闭时清理
             print("Hermes 网关已关闭")
 
-
         app = FastAPI(title="Multi_Agent Hermes Gateway", description="将你的 LangGraph Agent 暴露为 Hermes 技能", lifespan=lifespan)
 
         # ========== 供 wechat/dingtalk/feishu/telegram 等平台接入 ==========
+        # 微信公众号 方式接入
         @app.post("/webhook/{platform}")
         async def platform_webhook(platform: str, request: Request, background_tasks: BackgroundTasks):
             """接收各平台的消息"""
@@ -453,7 +454,6 @@ Content-Type: application/json
         @app.post("/api/skill/{skill_name}")
         async def execute_skill(skill_name: str, request: SkillRequest):
             print(f"========== SKILL NAME 接口 节点 ==========")
-            print("1111111111111111111111")
             """执行技能端点"""
             result = self.execute_skill(
                 skill_name=skill_name,
@@ -466,6 +466,46 @@ Content-Type: application/json
         async def list_skills():
             """列出所有可用技能"""
             return self.get_all_skill_definitions()
+        
+        @app.post("/ilink/bot/getupdates")
+        async def wechat_get_updates(request: Request):
+            """
+            微信调用: 拉取消息(长轮询)
+            这是微信主动调用的接口, 你的服务端需要在响应中返回消息
+            Args:
+                get_updates_buf: "上次的 buf 值"        # 微信告诉你的服务上次拉取到哪里
+
+            Returns:
+                get_updates_buf: "same_buf_value"       # 保持不变或更新
+                "msgs":[
+                    {                                   # Agent 要发送的回复
+                        "to_user_id": "user_abc",       # 接收消息的用户
+                        "msg_type": "text",             # 消息类型
+                        "content": "我是AI助手",         # Agent 生成的回复内容
+                        "context_token": context_token  # 微信需要的上下文
+                    }
+                ]
+            """
+            data = await request.json()
+            get_updates_buf = data.get("get_updates_buf", "")
+
+            # 1. 等待新消息(长轮询, 最多等 30 秒)
+            timeout = 30
+            start_time = asyncio.get_event_loop().time()
+            message_queue = get_message_queue()
+            while not message_queue:
+                if asyncio.get_event_loop().time() - start_time > timeout:
+                    break
+                await asyncio.sleep(1)
+
+            # 2. 如果有消息, 就返回给微信
+            if message_queue:
+                message_to_send = message_queue.popleft()
+
+                return {
+                    "get_updates_buf": get_updates_buf,
+                    "msgs": [message_to_send]
+                }
             
         @app.get("/health")
         async def health():
@@ -487,17 +527,40 @@ Content-Type: application/json
         async def chat_endpoint(request: ChatRequest):
             """供 Hermes 调用的 API 端点"""
             print(f"========== 业务 API 接口 节点 ==========")
-            print("8888888888888888888666666666666666666")
             user = request.user
             query = request.query
             thread_id = request.thread_id
             from_skill = request.from_skill
-            print("222222222")
             result = await self._process_message_sync(user, query, thread_id, from_skill)
             print(f"result:\n{result}")
             return {
                 "response": result.get("response", ""),
                 "image": result.get("image")
+            }
+        
+        @app.post("/internal/send_reply")
+        async def internal_send_reply(request: Request):
+            """
+            你的 LangGraph Agent 处理完用户消息后, 调用这个接口
+            把回复消息放进队列, 等待微信服务器来获取
+            Args:
+                to_user_id: "user_abc",       # 接收消息的用户
+                msg_type: "text",             # 消息类型
+                content: "我是AI助手",         # Agent 生成的回复内容
+                context_token: context_token  # 微信需要的上下文
+            
+            Returns:
+                status: "ok"                  # 存储状态
+            """
+            data = await request.json()
+            to_user_id = data.get("to_user_id", "")
+            msg_type = data.get("msg_type", "")
+            content = data.get("content", "")
+            context_token = data.get("context_token", "")
+            # 存储符合微信要求的消息队列
+            log_message_queue(to_user_id, msg_type, content, context_token)
+            return {
+                "status": "ok"
             }
         
         @app.get("/health")
@@ -513,8 +576,6 @@ Content-Type: application/json
     async def _process_message(self, user: str, query: str, platform: str):
         """异步处理消息"""
         try:
-            # 语义路由
-            # route = self.semantic_router(state)
 
             # 构建状态
             state = {
@@ -540,7 +601,6 @@ Content-Type: application/json
     async def _process_message_sync(self, user: str, query: str, thread_id: str = "default_id", from_skill: str = None) -> Dict:
         """同步处理消息(用于API)"""
         try:
-            # route = self.semantic_router(state)
 
             skill_def = self.get_skill_definition(from_skill)
             if skill_def:

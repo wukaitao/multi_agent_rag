@@ -15,10 +15,15 @@ from dotenv import load_dotenv
 from config import *
 # 导入网关应用
 from hermes.hermes_integration import get_hermes_multi_agent_bridge
+from hermes.wechat_integration import get_qrcode, main, load_token, save_token, run_bot, poll_login_status, get_config
 import sys
+import asyncio
+import nest_asyncio
 
 # 加载环境配置
 load_dotenv()
+
+nest_asyncio.apply()
 
 # 页面配置
 st.set_page_config(page_title="企业多Agent智能平台", layout="wide")
@@ -41,6 +46,8 @@ fastapi_app = bridge.create_fastapi_app()
 # 用全局变量记录服务状态，防止重复启动
 gateway_running = False
 fastapi_running = False
+# 获取 ClawBot 的 bot_token
+bot_token = load_token()
 
 def run_graph_with_config(user_input: str, username: str, token: str, thread_id: str):
     """运行图, 支持 interrupt 恢复"""
@@ -99,6 +106,77 @@ def start_gateway():
 def start_fastapi():
     """在后台启动 FastAPI 业务接口 网关"""
     uvicorn.run(fastapi_app, host="0.0.0.0", port=8000)
+    
+async def run_async(coro):
+    """安全运行异步函数的辅助函数"""
+    try:
+        # 尝试获取当前运行的事件循环
+        loop = asyncio.get_running_loop()
+    except RuntimeError:
+        # 没有运行的事件循环, 直接使用 asyncio.run()
+        loop = asyncio.new_event_loop()
+        asyncio.set_event_loop(loop)
+    # 已有运行的时间循环, 使用 nest_asyncio 或创建新任务
+    return loop.run_until_complete(coro)
+
+def start_bot_in_background(bot_token: str):
+    """在后台线程中启动机器人主循环"""
+    def bot_task():
+        try:
+            # 创建新的事件循环
+            loop = asyncio.new_event_loop()
+            asyncio.set_event_loop(loop)
+
+            # 运行主循环
+            loop.run_until_complete(run_bot(bot_token))
+
+            loop.close()
+        except Exception as e:
+            print(f"机器人运行异常: {str(e)}")
+        
+    thread = threading.Thread(target=bot_task, daemon=True)
+    thread.start()
+
+def start_login_and_bot_in_background(qrcode: str):
+    """
+    在后台线程中执行完整流程:
+    1. 轮询获取 bot_token
+    2. 获取配置
+    3. 启动机器人
+    """
+    def login_and_bot_task():
+        try:
+            # 创建新的事件循环
+            loop = asyncio.new_event_loop()
+            asyncio.set_event_loop(loop)
+
+            # 1. 轮询获取 bot_token
+            print(f"开始轮询登录状态...")
+            bot_token = loop.run_until_complete(poll_login_status(qrcode))
+
+            if not bot_token:
+                print(f"登录失败")
+                loop.close()
+                return
+            # 2. 保存 bot_token
+            save_token(bot_token)
+            print(f"登录成功, bot_token: {bot_token}")
+
+            # 3. 获取配置
+            config = loop.run_until_complete(get_config(bot_token))
+            if config:
+                print(f"登录成功, 机器人名称: {config['bot_name']}")
+
+            # 4. 自动启动机器人
+            loop.run_until_complete(run_bot(bot_token))
+
+            loop.close()
+        
+        except Exception as e:
+            print(f"登录流程异常: {str(e)}")
+    
+    thread = threading.Thread(target=login_and_bot_task, daemon=True)
+    thread.start()
 
 # ========== UI 界面 ==========
 tab1, tab2, tab3, tab4, tab5 = st.tabs(["智能问答", "资料上传", "多模态", "审批后台", "记忆中"])
@@ -140,6 +218,25 @@ with st.sidebar:
             st.caption("LangGraph 健康检查: http://localhost:8000/health")
         else:
             st.warning("FastAPI 业务接口已在运行中")
+    if st.button("生成微信 ClawBot 登录二维码"):
+        print("生成微信 ClawBot 登录二维码...")
+        # qrcode_result = asyncio.run(get_qrcode())
+        # print(f"======================= qrcode_result: {qrcode_result} ===========================")
+        # asyncio.create_task(main(qrcode_result.get("qrcode", "")))
+        # qrcode_result = handle_qrcode_button(get_qrcode())
+        # print(f"======================= qrcode_result: {qrcode_result} ===========================")
+        # background_task = asyncio.create_task(main(qrcode_result.get("qrcode", "")))
+        # handle_qrcode_button*(background_task)
+        qrcode_result = asyncio.run(get_qrcode())
+        print(f"======================= qrcode_result: {qrcode_result} ===========================")
+        qrcode_url = qrcode_result.get('qrcode_img_content', '')
+        qrcode = qrcode_result.get('qrcode', None)
+        print(f"======================= qrcode: {qrcode} ===========================")
+        # 启动后台登录流程(会自动轮询并启动机器人)
+        start_login_and_bot_in_background(qrcode)
+        print(f"======================= 启动后台登录流程(会自动轮询并启动机器人) ===========================")
+        st.markdown(f"[点击打开二维码链接扫码]({qrcode_url})", unsafe_allow_html=True)
+        st.info("打开微信 -> 扫一扫 -> 扫描二维码")
 
     st.warning("已实现: 鉴权|脱敏|熔断|降级|清洗|优化|人机协同|企业级审批流程|接入Hermes Agent提问(SKILL.md生成&gateway网关&API接口&WSL环境和Docker环境调用宿主机Ollama、Sqlite、Neo4j)")
 

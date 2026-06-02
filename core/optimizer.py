@@ -85,6 +85,7 @@ def extract_keywords(text: str, top_k=5) -> List[str]:
     return [word for word, _ in sorted_words[:top_k]]
 
 def kg_input_format():
+    """知识图谱输入格式示例"""
     return {
         "example": f"""
         支持格式：

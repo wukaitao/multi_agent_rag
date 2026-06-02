@@ -61,9 +61,16 @@ RETRIEVER_CONFIG = {
 
 # FastAPI
 ANGET_API_URL = "http://localhost:8000/api/chat"
+ANGET_REPLY_API_URL = "http://localhost:8000/internal/send_reply"
 
 # SKILL 配置
 SKILL_PATH = "~/.hermes/skills" if False else r"\\wsl.localhost\Ubuntu\home\wukai\.hermes\skills"  # 根据实际环境调整
+
+# ClawBot 微信插件配置
+BOT_BASE_URL = "https://ilinkai.weixin.qq.com"
+BOT_TYPE = "3" # 1-企业微信, 2-个人微信, 3-通用
+BOT_QRCODE_URL = "https://liteapp.weixin.qq.com/"
+TOKEN_PATH = "./memory/clawbot_token.json" if not is_wsl() else "/mnt/e/work/AIAgent/multi_agent_rag/memory/clawbot_token.json"
 
 # KG 增强版 Prompt
 UNIVERSAL_HIGH_PRECISION_PROMPT = """你是专业通用知识图谱三元组抽取专家，擅长从任意非结构化文本中精准提取高质量实体与语义关系。
