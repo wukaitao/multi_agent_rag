@@ -13,12 +13,14 @@ import asyncio
 import httpx
 import os
 import json
+import base64
+import random
 from io import BytesIO
 from datetime import datetime
 from PIL import Image
 from typing import Optional, Dict, Any
 from main_graph import graph
-from config import BOT_BASE_URL, BOT_TYPE, BOT_QRCODE_URL, ANGET_API_URL, ANGET_REPLY_API_URL, TOKEN_PATH
+from config import BOT_BASE_URL, BOT_TYPE, BOT_QRCODE_URL, ANGET_API_URL, ANGET_REPLY_API_URL, TOKEN_PATH, QRCODE_STATUS_PATH
 
 # ========== ClawBot 微信插件集成 ==========
 
@@ -42,35 +44,43 @@ async def get_updates(bot_token: str, get_updates_buf: str = ""):
             }
         ]
     """
+    print(f"========== get_updates bot_token: {bot_token} ========")
     async with httpx.AsyncClient() as client:
         try:
             response = await client.post(
                 f"{BOT_BASE_URL}/ilink/bot/getupdates",
                 json={"get_updates_buf": get_updates_buf},
                 headers=build_headers(bot_token),
-                timeout=60
+                timeout=10
             )
+            print(f"\nheaders:\n{build_headers(bot_token)}\n")
             data = response.json()
+            print(f"========== getupdates success ==========")
+            print(f"========== getupdates response: {response} ==========")
+            print(f"========== data: {data} ==========")
             get_updates_buf = data.get("get_updates_buf", "")
             msgs = data.get("msgs", [])
             return msgs, get_updates_buf
         except httpx.RequestError as e:
             # 长轮询超时是正常的
+            print(f"========== getupdates timeout ==========")
             return [], get_updates_buf
         except Exception as e:
             print(f"get_updates 异常: {str(e)}")
             return None, get_updates_buf
 
 # ========== 2. sendMessage 发送消息给用户 ==========
-async def send_message(bot_token, to_user_id, text, context_token, type: Optional[str] = "text"):
+async def send_message(bot_token, to_user_id, text, context_token, client_id: str, type: Optional[str] = "text"):
     """
     发送消息给用户
     type: 消息类型(text/image/voice/video/file)
+    message_type: 1 固定值 - 单聊普通业务消息(图文/语音/文件/视频都归在此大类); 2 - 群消息; 3 - 系统通知; 4 - 事件推送（入群/被撤回等)
     """
+    print(f"========== send_message bot_token: {bot_token} ========")
     item_list = []
     if type == "text":
         item_list = [{
-            "type": "TEXT",
+            "type": 1,
             "text_item": {"text": text}
         }]
     elif type == "image":
@@ -121,20 +131,32 @@ async def send_message(bot_token, to_user_id, text, context_token, type: Optiona
                 "type": "FILE",
                 "file_item": {"media_id": media_id}
             }]
+    payload = {
+        "msg": {
+            "to_user_id": to_user_id,
+            "context_token": context_token,
+            "client_id": client_id,
+            "item_list": item_list,
+            "message_type": 2,
+            "message_state": 2
+        }
+    }
+    print(f"================== payload: {payload} ==================")
     
     async with httpx.AsyncClient() as client:
         response = await client.post(
             f"{BOT_BASE_URL}/ilink/bot/sendmessage",
-            json={
-                "msg": {
-                    "to_user_id": to_user_id,
-                    "message_type": "BOT",
-                    "item_list": item_list,
-                    "context_token": context_token
-                }
-            },
+            json=payload,
             headers=build_headers(bot_token)
         )
+        print(f"========== send_message - response: {response} =========")
+        print(f"0000000000000000000000000000000000000000000000000000000000000000000000000000")
+        if response.status_code == 200:
+            result = response.json()
+            print(f"11111========== send_message - result: {result} =========11111")
+            print(f"22222========== send_message - ret: {result.get('ret')} =========22222")
+            if result.get("ret") == 0:
+                print("成功发送消息..........................................")
         return response.status_code == 200
 
 # ========== 3. getUploadUrl 获取媒体文件上传地址 ==========
@@ -151,6 +173,7 @@ async def get_upload_url(bot_token: str,file_type: str = "image", file_size: int
             "expire_time": "2026-12-31T23:59:59Z"
         }
     """
+    print(f"========== get_upload_url bot_token: {bot_token} ========")
     async with httpx.AsyncClient() as client:
         response = await client.post(
             f"{BOT_BASE_URL}/inlink/bot/getuploadurl",
@@ -174,9 +197,11 @@ async def get_upload_url(bot_token: str,file_type: str = "image", file_size: int
                 return None
 
 # ========== 4. getConfig 获取账号配置 ==========
-async def get_config(bot_token: str) -> Optional[Dict[str, Any]]:
+async def get_config(qrcode_status: dict, is_verify_token: bool = False) -> Optional[Dict[str, Any]]:
     """
     获取账号配置信息
+    Args:
+        "ilink_user_id": "wechat"     # iLink 用户ID (微信用户)
     Returns:
         {
             "bot_name": "机器人名称",
@@ -186,13 +211,24 @@ async def get_config(bot_token: str) -> Optional[Dict[str, Any]]:
             "supported_message_types": ["text", "image", "voice", "video", "file"]
         }
     """
+    bot_token = qrcode_status.get("bot_token")
+    ilink_user_id = qrcode_status.get("ilink_user_id")
+    print(f"========== get_config bot_token: {bot_token} ========")
     async with httpx.AsyncClient() as client:
         response = await client.post(
             f"{BOT_BASE_URL}/ilink/bot/getconfig",
-            json={},
+            json={
+                "ilink_user_id": ilink_user_id
+            },
             headers=build_headers(bot_token),
             timeout=60
         )
+        print(f"ilink_user_id:\n{ilink_user_id}")
+        print(f"headers:\n{build_headers(bot_token)}")
+        # 检验 bot_token 是否有效
+        if is_verify_token:
+            return response.status_code == 200 and response.json().get("errcode") == 0
+
         if response.status_code == 200:
             data = response.json()
             if data.get("errcode") == 0:
@@ -205,6 +241,7 @@ async def get_config(bot_token: str) -> Optional[Dict[str, Any]]:
                 }
             else:
                 print(f"获取配置失败: {data.get('errmsg')}")
+                print(f"============= {data} =============")
                 return None
         else:
             print(f"HTTP错误: {response.status_code}")
@@ -219,6 +256,7 @@ async def send_typing(bot_token: str, to_user_id: str, typing: bool = True):
         to_user_id: 接收方用户ID
         typing: True=正在输入, False=取消正在输入
     """
+    print(f"========== send_typing bot_token: {bot_token} ========")
     async with httpx.AsyncClient() as client:
         await client.post(
             f"{BOT_BASE_URL}/ilink/bot/sendtyping",
@@ -234,57 +272,68 @@ async def send_typing(bot_token: str, to_user_id: str, typing: bool = True):
 
 async def handle_message(bot_token: str, msg: Dict[str, Any]):
     """处理消息: 调用你的 Langgraph Agent"""
+    print(f"========== handle_message bot_token: {bot_token} ========")
+    # msg["to_user_id"] 机器人自身ID(bot唯一标识)
     user_id = msg["from_user_id"]
     context_token = msg.get("context_token")
-    msg_type = msg.get("msg_type")
+    message_type = msg.get("message_type")
+    client_id = msg.get("client_id")
     user_text = extract_text(msg)
 
     if not user_text:
-        await send_message(bot_token, user_id, "暂时仅支持文字对话, 请发送文字消息", context_token)
+        await send_message(bot_token, user_id, "暂时仅支持文字对话, 请发送文字消息", context_token, client_id)
         return
     
     # 发送[正在输入]状态
     await send_typing(bot_token, user_id, typing=True)
 
-    try:
-        # 调用 LangGraph Agent
-        result = requests.post(
-            ANGET_API_URL,
-            json={
-                "user": f"wechat_{user_id}",
-                "query": user_text,
-                "thread_id": "wechat_default_thread",
-                "from_skill": None
-            },
-            headers={
-                "Authorization": f"Bearer {bot_token}"
-            },
-            timeout=180
-        )
-        response_text = result.get("response", "抱歉, 我无法回答这个问题.")
-        response_image = result.get("image", "")
-        # 回复支持类型: 文本(text)/图片(image)/语音(voice)/视频(video)/文件(file)  # 判断 response_text 回复
-        # 存储消息队列
-        await send_reply(bot_token, user_id, response_text, msg_type, context_token)
-        # 发送回复
-        await send_message(bot_token, user_id, response_text, context_token)
+    async with httpx.AsyncClient() as client:
+        try:
+            # 调用 LangGraph Agent
+            response = await client.post(
+                ANGET_API_URL,
+                json={
+                    "user": user_id,
+                    "query": user_text,
+                    "thread_id": f"wechat_{user_id}",
+                    "from_skill": "rag_query" # ToDo 暂时固定为RAG知识库查询
+                },
+                headers={
+                    "Authorization": f"Bearer {bot_token}"
+                },
+                timeout=180
+            )
+            if response.status_code == 200:
+                result = response.json()
+                print(f"==================== 111111 result: {result} ==================")
+                response_text = result.get("response", "抱歉, 我无法回答这个问题.")
+                print(f"==================== 2222222222222 response_text: {response_text} ==================")
+                response_image = result.get("image", "")
+                # 回复支持类型: 文本(text)/图片(image)/语音(voice)/视频(video)/文件(file)  # 判断 response_text 回复
+                # 存储消息队列
+                await send_reply(bot_token, user_id, response_text, message_type, context_token)
+                # 发送回复
+                await send_message(bot_token, user_id, response_text, context_token, client_id)
 
-        # 取消[正在输入]状态
-        await send_typing(bot_token, user_id, typing=False)
-    except Exception as e:
-        # 取消[正在输入]状态
-        await send_typing(bot_token, user_id, typing=False)
-        await send_reply(bot_token, user_id, f"处理失败: {str(e)}", msg_type, context_token)
-        await send_message(bot_token, user_id, f"处理失败: {str(e)}", context_token)
+                # 取消[正在输入]状态
+                await send_typing(bot_token, user_id, typing=False)
+            else:
+                raise Exception(f"接口 HTTP 异常: {response.status_code}")
+        except Exception as e:
+            # 取消[正在输入]状态
+            print(f"==================== 000000000000000000 ==================")
+            await send_typing(bot_token, user_id, typing=False)
+            await send_reply(bot_token, user_id, f"处理失败: {str(e)}", message_type, context_token)
+            await send_message(bot_token, user_id, f"处理失败: {str(e)}", context_token, client_id)
 
-async def send_reply(bot_token: str, user_id: str, reply: str, msg_type: str, context_token: str):
+async def send_reply(bot_token: str, user_id: str, reply: str, message_type: str, context_token: str):
     """
     把待发送给微信服务器的消息存储在消息队列, 等待微信服务器通过 get_updates 接口来获取
     """
     async with httpx.AsyncClient() as client:
         try:
             # 调用消息存储队列接口
-            result = requests.post(
+            response = await client.post(
                 ANGET_REPLY_API_URL,
                 json={
                     "to_user_id": user_id,
@@ -297,10 +346,15 @@ async def send_reply(bot_token: str, user_id: str, reply: str, msg_type: str, co
                 },
                 timeout=180
             )
-            if result.status == "ok":
-                print(f"消息存储成功")
-            
-            return result
+            print(f"99999999999999 {response} 99999999999999999999999")
+            if response.status_code == 200:
+                result = response.json()
+                if result.get("status") == "ok":
+                    print(f"消息存储成功")
+                
+                return result
+            else:
+                raise Exception(f"接口 HTTP 异常: {response.status_code}")
         except Exception as e:
             print(f"消息存储异常: {str(e)}")
             return {
@@ -309,6 +363,7 @@ async def send_reply(bot_token: str, user_id: str, reply: str, msg_type: str, co
 
 async def run_bot(bot_token: str):
     """运行机器人主循环"""
+    print(f"========== run_bot bot_token: {bot_token} ========")
     print(f"机器人已启动, 开始监听消息...")
     print(f"提示: 在微信中向「微信 ClawBot」发送消息测试")
 
@@ -330,21 +385,35 @@ async def run_bot(bot_token: str):
 
             for msg in messages:
                 await handle_message(bot_token, msg)
+
         except Exception as e:
             print(f"主循环异常: {str(e)}")
             await asyncio.sleep(5)
 
 def build_headers(token):
     """构建请求头"""
+    print(f"========== build_headers bot_token: {token} ========")
+    print(f"========== randomWechatUin: {randomWechatUin()} ========")
     return {
         "Content-Type": "application/json",
-        "AuthorizationType": "ilink_to_token",
-        "Authorization": f"Bearer {token}"
+        "AuthorizationType": "ilink_bot_token",
+        "Authorization": f"Bearer {token}",
+        "X-WECHAT-UIN": randomWechatUin()
     }
 def extract_text(msg) -> str:
     """从消息中提取文本内容"""
     result = extract_message_content(msg)
     return result["content"] if result["type"] == "text" else ""
+
+def randomWechatUin():
+    # 生成 4 字节随机数(对应 crypto.randomBytes(4))
+    uint32_bytes = random.getrandbits(32).to_bytes(4, byteorder='big', signed=False)
+    
+    # 转为 uint32 十进制字符串
+    uint32 = int.from_bytes(uint32_bytes, byteorder='big', signed=False)
+    
+    # 转 utf8 字节 → base64 编码
+    return base64.b64encode(str(uint32).encode('utf-8')).decode('utf-8')
 
 def extract_message_content(msg) -> dict:
     """
@@ -362,31 +431,38 @@ def extract_message_content(msg) -> dict:
     if "item_list" in msg:
         for item in msg["item_list"]:
             msg_type = item.get("type", "")
+            """
+            # 1 text_item - 纯文本消息; 
+            # 2 image_item -- 图片消息(原图 + 缩略图 url、aes 密钥); 
+            # 3 voice_item - 微信语音消息(silk/m4a); 
+            # 4 file_item - 普通文件(txt/m4a / 压缩包等); 
+            # 5 video_item - 短视频消息(视频 + 封面缩略图)
+            """
 
-            if msg_type == "TEXT":
+            if msg_type == 1:
                 text_item = item.get("text_item", {})
                 result["type"] = "text"
                 result["content"] = text_item.get("text", "")
-            elif msg_type == "IMAGE":
+            elif msg_type == 2:
                 image_item = item.get("image_item", {})
                 result["type"] = "image"
-                result["content"] = image_item.get("url", "")
-                result["media_id"] = image_item.get("media_id", "")
-            elif msg_type == "VOICE":
+                result["content"] = image_item.get("media", {}).get("full_url", "")
+                result["media_id"] = image_item.get("media", {}).get("aes_key", "")
+            elif msg_type == 3:
                 voice_item = item.get("voice_item", {})
                 result["type"] = "voice"
-                result["content"] = voice_item.get("url", "")
-                result["media_id"] = voice_item.get("media_id", "")
-            elif msg_type == "VIDEO":
-                video_item = item.get("video_item", {})
-                result["type"] = "video"
-                result["content"] = video_item.get("url", "")
-                result["media_id"] = video_item.get("media_id", "")
-            elif msg_type == "FILE":
+                result["content"] = voice_item.get("media", {}).get("full_url", "")
+                result["media_id"] = voice_item.get("media", {}).get("aes_key", "")
+            elif msg_type == 4:
                 file_item = item.get("file_item", {})
                 result["type"] = "file"
-                result["content"] = file_item.get("url", "")
+                result["content"] = file_item.get("media", {}).get("full_url", "")
                 result["file_name"] = file_item.get("file_name", "")
+            elif msg_type == 5:
+                video_item = item.get("video_item", {})
+                result["type"] = "video"
+                result["content"] = video_item.get("media", {}).get("full_url", "")
+                result["media_id"] = video_item.get("media", {}).get("aes_key", "")
             
     # 2. 兼容直接字段格式
     elif "msg_type" in msg:
@@ -450,28 +526,28 @@ async def upload_media(bot_token: str, file_path: str, file_type: str = "image")
 
 # ========== 凭证管理 ==========
 
-def save_token(token:str):
-    """将 bot_token 保存到本地文件"""
+def save_qrcode_status(qrcode_status: dict):
+    """将 qrcode_status 保存到本地文件"""
     # 确保文件存在
-    os.makedirs(os.path.dirname(TOKEN_PATH), exist_ok=True)
+    os.makedirs(os.path.dirname(QRCODE_STATUS_PATH), exist_ok=True)
     data = {
-        "bot_token": token,
+        "baseurl": qrcode_status.get("baseurl", ""),
+        "bot_token": qrcode_status.get("bot_token", ""),
+        "ilink_bot_id": qrcode_status.get("ilink_bot_id", ""),
+        "ilink_user_id": qrcode_status.get("ilink_user_id", ""),
         "saved_at": datetime.now().isoformat()
     }
-    with open(TOKEN_PATH, "w") as f:
+    with open(QRCODE_STATUS_PATH, "w") as f:
         json.dump(data, f, indent=2)
-    print(f"bot_token 已保存到 {TOKEN_PATH}")
+    print(f"qrcode_status 已保存到 {QRCODE_STATUS_PATH}")
 
-def load_token() -> Optional[str]:
-    """从本地文件加载 bot_token"""
-    if os.path.exists(TOKEN_PATH):
-        with open(TOKEN_PATH, "r") as f:
-            data = json.load(f)
-            token = data.get("bot_token")
-            if token:
-                print(f"bot_token 已从 {TOKEN_PATH} 加载")
-                return token
-    print(f"未找到有效的 bot_token 文件")
+def load_qrcode_status():
+    """从本地文件加载 qrcode_status"""
+    if os.path.exists(QRCODE_STATUS_PATH):
+        with open(QRCODE_STATUS_PATH, "r") as f:
+            print(f"qrcode_status 已从 {QRCODE_STATUS_PATH} 加载")
+            return json.load(f)
+    print(f"未找到有效的 qrcode_status 文件")
     return None
 
 
@@ -489,8 +565,6 @@ async def get_qrcode():
         
         # 直接调用主函数启动轮询登录状态
         print(f"======================= 调用主函数: 获取二维码状态 - 账号配置 - 接收用户消息 - 处理信息[ - 上传资料] - 发送回复[正在输入] ===========================")
-        # qrcode = result.get("qrcode", "")
-        # asyncio.create_task(main(qrcode))
 
         return result
     
@@ -535,10 +609,12 @@ async def poll_login_status(qrcode: str):
         elif status == "scanned":
             print("扫码已完成, 请在手机上点击确认...")
         elif status == "confirmed":
-            # 获取 bot_token 并保存
+            # 获取 qrcode_status 并保存
             bot_token = result.get("bot_token", "")
+            print(f"================ 8888888888888888 =====================")
+            print(f"================ /ilink/bot/get_qrcode_status result: {result} =====================")
             print(f"登录成功, bot_token: {bot_token}")
-            return bot_token
+            return result
         elif status == "expired":
             print(f"二维码已过期, 请重新生成二维码")
             return None
@@ -553,35 +629,35 @@ async def main(qrcode: str):
     主函数: 登录 + 启动机器人
     如果提供了 qrcode, 则直接使用它轮询登录状态
     """
-    # 1. 检查是否有保存的 bot_token
-    bot_token = load_token()
+    # 1. 检查是否有保存的 qrcode_status
+    qrcode_status = load_qrcode_status()
 
-    if bot_token:
+    if qrcode_status:
         # 验证 bot_token 是否有效
-        config = await get_config(bot_token)
+        config = await get_config(qrcode_status)
         if config:
-            print(f"使用已保存的 bot_token: {bot_token}, 机器人名称: {config['bot_name']}")
-            await run_bot(bot_token)
+            print(f"使用已保存的 qrcode_status: {qrcode_status}, 机器人名称: {config['bot_name']}")
+            await run_bot(qrcode_status.get("bot_token"))
             return
         
-    # 2. 如果没有 token 或 token 无效, 需要扫码登录
+    # 2. 如果没有 bot_token 或 bot_token 无效, 需要扫码登录
     if not qrcode:
         print("没有有效的 bot_token, 需要扫码登录")
         return
     
     # 3. 轮询等待扫码确认
-    bot_token = await poll_login_status(qrcode)
+    qrcode_status = await poll_login_status(qrcode)
 
-    if not bot_token:
-        print(f"登录失败, 无法获取 bot_token")
+    if not qrcode_status:
+        print(f"登录失败, 无法获取 qrcode_status")
         return
     
-    # 4. 保存 bot_token 到本地
-    save_token(bot_token)
+    # 4. 保存 qrcode_status 到本地
+    save_qrcode_status(qrcode_status)
 
     # 5. 获取配置并启动机器人
-    config = await get_config(bot_token)
+    config = await get_config(qrcode_status)
     if config:
         print(f"登录成功, 机器人名称: {config['bot_name']}")
 
-    await run_bot(bot_token)
+    await run_bot(qrcode_status.get("bot_token"))

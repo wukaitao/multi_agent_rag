@@ -70,7 +70,10 @@ SKILL_PATH = "~/.hermes/skills" if False else r"\\wsl.localhost\Ubuntu\home\wuka
 BOT_BASE_URL = "https://ilinkai.weixin.qq.com"
 BOT_TYPE = "3" # 1-企业微信, 2-个人微信, 3-通用
 BOT_QRCODE_URL = "https://liteapp.weixin.qq.com/"
-TOKEN_PATH = "./memory/clawbot_token.json" if not is_wsl() else "/mnt/e/work/AIAgent/multi_agent_rag/memory/clawbot_token.json"
+NGROK_URL = "https://coleslaw-coziness-unblessed.ngrok-free.dev" # 本地8001内网穿透网址, 废弃(本地 Agent 是通过主动轮询拉取和发送消息与微信 ClawBot 交互, 所以不需要穿透内网供微信 ClawBot 调用)
+NGROK_UR_WEB_INTERFACE= "http://127.0.0.1:40410" # 本地8001内网穿透 Web Interface 界面
+TOKEN_PATH = "./memory/clawbot_token.json" if not is_wsl() else "/mnt/e/work/AIAgent/multi_agent_rag/memory/clawbot_token.json" # 废弃
+QRCODE_STATUS_PATH = "./memory/clawbot_qrcode_status.json" if not is_wsl() else "/mnt/e/work/AIAgent/multi_agent_rag/memory/clawbot_qrcode_status.json"
 
 # KG 增强版 Prompt
 UNIVERSAL_HIGH_PRECISION_PROMPT = """你是专业通用知识图谱三元组抽取专家，擅长从任意非结构化文本中精准提取高质量实体与语义关系。

@@ -10,7 +10,7 @@ import json
 import requests
 from typing import Dict, Any, Optional
 from datetime import datetime
-from fastapi import FastAPI, Request, HTTPException, BackgroundTasks
+from fastapi import FastAPI, Request, Response, HTTPException, BackgroundTasks
 from pydantic import BaseModel
 from contextlib import asynccontextmanager
 from llama_index.llms.ollama import Ollama
@@ -157,12 +157,12 @@ class HermesMultiAgentBridge:
             }
         }
     
-    def get_skill_definition(self, skill_name: str) -> Optional[Dict]:
+    def get_skill_definition(self, skill_name: str | None) -> Optional[Dict]:
         """获取单个技能定义"""
         skills = self.get_all_skill_definitions()
-        return skills.get(skill_name)
+        return skills.get(skill_name) if skill_name else None
     
-    def execute_skill(self, skill_name: str, params: Dict, context: Dict) -> Dict:
+    def execute_skill(self, skill_name: str | None, params: Dict, context: Dict) -> Dict:
         """
         执行技能: 通过 HTTP API 调用你的 LangGraph Agent
 
@@ -467,45 +467,47 @@ Content-Type: application/json
             """列出所有可用技能"""
             return self.get_all_skill_definitions()
         
-        @app.post("/ilink/bot/getupdates")
-        async def wechat_get_updates(request: Request):
-            """
-            微信调用: 拉取消息(长轮询)
-            这是微信主动调用的接口, 你的服务端需要在响应中返回消息
-            Args:
-                get_updates_buf: "上次的 buf 值"        # 微信告诉你的服务上次拉取到哪里
+        # @app.post("/ilink/bot/getupdates")
+        # async def wechat_get_updates(request: Request):
+        #     """
+        #     微信调用: 拉取消息(长轮询)
+        #     这是微信主动调用的接口, 你的服务端需要在响应中返回消息
+        #     Args:
+        #         get_updates_buf: "上次的 buf 值"        # 微信告诉你的服务上次拉取到哪里
 
-            Returns:
-                get_updates_buf: "same_buf_value"       # 保持不变或更新
-                "msgs":[
-                    {                                   # Agent 要发送的回复
-                        "to_user_id": "user_abc",       # 接收消息的用户
-                        "msg_type": "text",             # 消息类型
-                        "content": "我是AI助手",         # Agent 生成的回复内容
-                        "context_token": context_token  # 微信需要的上下文
-                    }
-                ]
-            """
-            data = await request.json()
-            get_updates_buf = data.get("get_updates_buf", "")
+        #     Returns:
+        #         get_updates_buf: "same_buf_value"       # 保持不变或更新
+        #         "msgs":[
+        #             {                                   # Agent 要发送的回复
+        #                 "to_user_id": "user_abc",       # 接收消息的用户
+        #                 "msg_type": "text",             # 消息类型
+        #                 "content": "我是AI助手",         # Agent 生成的回复内容
+        #                 "context_token": context_token  # 微信需要的上下文
+        #             }
+        #         ]
+        #     """
+        #     print(f"========== 微信 ClawBot 调用 Agent 的 /ilink/bot/getupdates 接口 ==========")
+        #     print(f"kkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkk")
+        #     data = await request.json()
+        #     get_updates_buf = data.get("get_updates_buf", "")
 
-            # 1. 等待新消息(长轮询, 最多等 30 秒)
-            timeout = 30
-            start_time = asyncio.get_event_loop().time()
-            message_queue = get_message_queue()
-            while not message_queue:
-                if asyncio.get_event_loop().time() - start_time > timeout:
-                    break
-                await asyncio.sleep(1)
+        #     # 1. 等待新消息(长轮询, 最多等 30 秒)
+        #     timeout = 30
+        #     start_time = asyncio.get_event_loop().time()
+        #     message_queue = get_message_queue()
+        #     while not message_queue:
+        #         if asyncio.get_event_loop().time() - start_time > timeout:
+        #             break
+        #         await asyncio.sleep(1)
 
-            # 2. 如果有消息, 就返回给微信
-            if message_queue:
-                message_to_send = message_queue.popleft()
+        #     # 2. 如果有消息, 就返回给微信
+        #     if message_queue:
+        #         message_to_send = message_queue.popleft()
 
-                return {
-                    "get_updates_buf": get_updates_buf,
-                    "msgs": [message_to_send]
-                }
+        #         return {
+        #             "get_updates_buf": get_updates_buf,
+        #             "msgs": [message_to_send]
+        #         }
             
         @app.get("/health")
         async def health():
@@ -553,6 +555,7 @@ Content-Type: application/json
                 status: "ok"                  # 存储状态
             """
             data = await request.json()
+            print(f"========== /internal/send_reply - data: {data} ==========")
             to_user_id = data.get("to_user_id", "")
             msg_type = data.get("msg_type", "")
             content = data.get("content", "")

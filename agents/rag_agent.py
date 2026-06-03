@@ -6,7 +6,7 @@ from agents.chat_agent import chat_agent_node
 from config import *
 import re
 
-@circuit_breaker
+# @circuit_breaker
 def rag_agent_node(state):
     """优化版RAG节点: 多查询融合 + 重排序 + 上下文扩展"""
     print(f"========== RAG 节点 ==========")

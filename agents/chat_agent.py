@@ -9,7 +9,7 @@ llm = Ollama(
     temperature=0
 )
 
-@circuit_breaker
+# @circuit_breaker
 def chat_agent_node(state):
     print(f"========== CHAT 节点 ==========")
     query = state["query"]

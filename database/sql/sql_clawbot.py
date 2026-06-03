@@ -46,5 +46,4 @@ def get_message_queue():
     return [dict(row) for row in c.fetchall()]
 
 # ========== 初始化数据表 ==========
-if __name__ == "__main__":
-    init_message_queue()
+init_message_queue()

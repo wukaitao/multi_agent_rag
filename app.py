@@ -15,7 +15,7 @@ from dotenv import load_dotenv
 from config import *
 # 导入网关应用
 from hermes.hermes_integration import get_hermes_multi_agent_bridge
-from hermes.wechat_integration import get_qrcode, main, load_token, save_token, run_bot, poll_login_status, get_config
+from hermes.wechat_integration import get_qrcode, load_qrcode_status, save_qrcode_status, run_bot, poll_login_status, get_config
 import sys
 import asyncio
 import nest_asyncio
@@ -38,6 +38,8 @@ if "pending_config" not in st.session_state:
 if st.session_state.get('need_refresh', False):
     st.session_state['need_refresh'] = False
     st.rerun()
+if "bot_token_verify" not in st.session_state:
+    st.session_state.bot_token_verify = False
 
 # Gateway | FastAPI 实例
 bridge = get_hermes_multi_agent_bridge()
@@ -46,8 +48,8 @@ fastapi_app = bridge.create_fastapi_app()
 # 用全局变量记录服务状态，防止重复启动
 gateway_running = False
 fastapi_running = False
-# 获取 ClawBot 的 bot_token
-bot_token = load_token()
+# 获取 ClawBot 的状态信息
+qrcode_status = load_qrcode_status()
 
 def run_graph_with_config(user_input: str, username: str, token: str, thread_id: str):
     """运行图, 支持 interrupt 恢复"""
@@ -119,7 +121,7 @@ async def run_async(coro):
     # 已有运行的时间循环, 使用 nest_asyncio 或创建新任务
     return loop.run_until_complete(coro)
 
-def start_bot_in_background(bot_token: str):
+def start_bot_in_background(qrcode_status: dict):
     """在后台线程中启动机器人主循环"""
     def bot_task():
         try:
@@ -128,7 +130,7 @@ def start_bot_in_background(bot_token: str):
             asyncio.set_event_loop(loop)
 
             # 运行主循环
-            loop.run_until_complete(run_bot(bot_token))
+            loop.run_until_complete(run_bot(qrcode_status.get('bot_token')))
 
             loop.close()
         except Exception as e:
@@ -152,23 +154,23 @@ def start_login_and_bot_in_background(qrcode: str):
 
             # 1. 轮询获取 bot_token
             print(f"开始轮询登录状态...")
-            bot_token = loop.run_until_complete(poll_login_status(qrcode))
+            qrcode_status = loop.run_until_complete(poll_login_status(qrcode))
 
-            if not bot_token:
+            if not qrcode_status:
                 print(f"登录失败")
                 loop.close()
                 return
-            # 2. 保存 bot_token
-            save_token(bot_token)
-            print(f"登录成功, bot_token: {bot_token}")
+            # 2. 保存 qrcode_status
+            save_qrcode_status(qrcode_status)
+            print(f"登录成功, bot_token: {qrcode_status.get('bot_token')}")
 
             # 3. 获取配置
-            config = loop.run_until_complete(get_config(bot_token))
+            config = loop.run_until_complete(get_config(qrcode_status))
             if config:
                 print(f"登录成功, 机器人名称: {config['bot_name']}")
 
             # 4. 自动启动机器人
-            loop.run_until_complete(run_bot(bot_token))
+            loop.run_until_complete(run_bot(qrcode_status.get('bot_token')))
 
             loop.close()
         
@@ -220,13 +222,6 @@ with st.sidebar:
             st.warning("FastAPI 业务接口已在运行中")
     if st.button("生成微信 ClawBot 登录二维码"):
         print("生成微信 ClawBot 登录二维码...")
-        # qrcode_result = asyncio.run(get_qrcode())
-        # print(f"======================= qrcode_result: {qrcode_result} ===========================")
-        # asyncio.create_task(main(qrcode_result.get("qrcode", "")))
-        # qrcode_result = handle_qrcode_button(get_qrcode())
-        # print(f"======================= qrcode_result: {qrcode_result} ===========================")
-        # background_task = asyncio.create_task(main(qrcode_result.get("qrcode", "")))
-        # handle_qrcode_button*(background_task)
         qrcode_result = asyncio.run(get_qrcode())
         print(f"======================= qrcode_result: {qrcode_result} ===========================")
         qrcode_url = qrcode_result.get('qrcode_img_content', '')
@@ -419,6 +414,7 @@ st.info("LangGraph多智能体|RAG混合检索(文档边界截断&强化Prompt&�
 # ========== 主入口 ==========
 if __name__ == "__main__":
 
+    # 执行文件 Python 命令
     if len(sys.argv) > 1:
         if sys.argv[1] == "generate":
             # 生成 SKILL.md 文件
@@ -444,3 +440,7 @@ if __name__ == "__main__":
             print("用法:")
             print("python hermes_integration.py generate [输出目录] # 生成 SKILL.md 文件")
             print("python hermes_integration.py serve # 启动 API 服务")
+    
+    # 检验 bot_token 是否有效
+    st.session_state.bot_token_verify = qrcode_status and asyncio.run(get_config(qrcode_status, True))
+    print(f"已存储的 bot_token 有效性: {'是' if st.session_state.bot_token_verify else '否'}")
