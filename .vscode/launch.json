@@ -1,0 +1,53 @@
+{
+    "version": "0.2.0",
+    "configurations": [
+
+        {
+            "name": "Streamlit - RAG前端全链路调试",
+            "type": "python",
+            "request": "launch",
+            "module": "streamlit",
+            "args": [
+                "run",
+                "app.py",
+                "--server.port",
+                "8501"
+            ],
+            "console": "integratedTerminal",
+            "justMyCode": false
+        },
+
+        {
+            "name": "FastAPI-8000 - RAG后端API调试",
+            "type": "python",
+            "request": "launch",
+            "module": "uvicorn",
+            "args": [
+                "app:fastapi_app",
+                "--host",
+                "0.0.0.0",
+                "--port",
+                "8000"
+            ],
+            "console": "integratedTerminal",
+            "justMyCode": false
+        },
+
+        {
+            "name": "Gateway-8001 - 网关调试",
+            "type": "python",
+            "request": "launch",
+            "module": "uvicorn",
+            "args": [
+                "app:gateway_app",
+                "--host",
+                "0.0.0.0",
+                "--port",
+                "8001"
+            ],
+            "console": "integratedTerminal",
+            "justMyCode": false
+        }
+
+    ]
+}

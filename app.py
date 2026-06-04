@@ -11,11 +11,12 @@ import os
 import re
 import uvicorn
 import threading
+# import debugpy
 from dotenv import load_dotenv
 from config import *
 # 导入网关应用
 from hermes.hermes_integration import get_hermes_multi_agent_bridge
-from hermes.wechat_integration import get_qrcode, load_qrcode_status, save_qrcode_status, run_bot, poll_login_status, get_config
+from hermes.wechat_integration import get_qrcode, load_qrcode_status, save_qrcode_status, run_bot, poll_login_status, get_bot_info
 import sys
 import asyncio
 import nest_asyncio
@@ -101,13 +102,19 @@ def run_graph_with_config(user_input: str, username: str, token: str, thread_id:
         else:
             return {"response": f"执行失败: {error_msg}", "route": "end"}
         
-def start_gateway():
+def start_gateway(port: int = 8001, debug_port: int = 5678):
     """在后台启动 Hermes 网关"""
-    uvicorn.run(gateway_app, host="0.0.0.0", port=8001)
+    # 启动调试监听
+    # debugpy.listen(("localhost", debug_port))
+    print(f"Hermes 网关 调试器已启动, 监听端口 {debug_port}")
+    uvicorn.run(gateway_app, host="0.0.0.0", port=port, reload=False)
 
-def start_fastapi():
+def start_fastapi(port: int = 8000, debug_port: int = 5677):
     """在后台启动 FastAPI 业务接口 网关"""
-    uvicorn.run(fastapi_app, host="0.0.0.0", port=8000)
+    # 启动调试监听
+    # debugpy.listen(("localhost", debug_port))
+    print(f"FastAPI 业务接口 网关 调试器已启动, 监听端口 {debug_port}")
+    uvicorn.run(fastapi_app, host="0.0.0.0", port=port, reload=False)
     
 async def run_async(coro):
     """安全运行异步函数的辅助函数"""
@@ -165,7 +172,7 @@ def start_login_and_bot_in_background(qrcode: str):
             print(f"登录成功, bot_token: {qrcode_status.get('bot_token')}")
 
             # 3. 获取配置
-            config = loop.run_until_complete(get_config(qrcode_status))
+            config = loop.run_until_complete(get_bot_info(qrcode_status.get('bot_token')))
             if config:
                 print(f"登录成功, 机器人名称: {config['bot_name']}")
 
@@ -197,7 +204,7 @@ with st.sidebar:
         if not gateway_running:
             # 在新线程中启动网关
             # http://localhost:8001/docs 查看接口文档
-            gateway_thread = threading.Thread(target=start_gateway, daemon=True)
+            gateway_thread = threading.Thread(target=start_gateway, args=(8001, 5678), daemon=True)
             gateway_thread.start()
             gateway_running = True
             st.success("Hermes 网关已启动(端口: 8001)")
@@ -213,7 +220,7 @@ with st.sidebar:
         if not fastapi_running:
             # 在新线程中启动网关
             # http://localhost:8000/docs 查看接口文档
-            fastapi_thread = threading.Thread(target=start_fastapi, daemon=True)
+            fastapi_thread = threading.Thread(target=start_fastapi, args=(8000, 5677), daemon=True)
             fastapi_thread.start()
             fastapi_running = True
             st.caption("LangGraph API端点: http://localhost:8000/api/chat")
@@ -430,17 +437,17 @@ if __name__ == "__main__":
             print("网关端点: http://localhost:8001/webhook/{platform}")
             print("API端点: http://localhost:8001/api/chat")
             print("健康检查: http://localhost:8001/health")
-            uvicorn.run(gateway_app, host="0.0.0.0", port=8001)
+            uvicorn.run(gateway_app, host="0.0.0.0", port=8001, reload=False)
         elif sys.argv[1] == "serve":
             print("FastAPI 业务接口已启动(端口: 8000)")
             print("LangGraph API端点: http://localhost:8000/api/chat")
             print("LangGraph 健康检查: http://localhost:8000/health")
-            uvicorn.run(fastapi_app, host="0.0.0.0", port=8000)
+            uvicorn.run(fastapi_app, host="0.0.0.0", port=8000, reload=False)
         else:
             print("用法:")
             print("python hermes_integration.py generate [输出目录] # 生成 SKILL.md 文件")
             print("python hermes_integration.py serve # 启动 API 服务")
     
     # 检验 bot_token 是否有效
-    st.session_state.bot_token_verify = qrcode_status and asyncio.run(get_config(qrcode_status, True))
+    st.session_state.bot_token_verify = qrcode_status and asyncio.run(get_bot_info(qrcode_status.get("bot_token")))
     print(f"已存储的 bot_token 有效性: {'是' if st.session_state.bot_token_verify else '否'}")
