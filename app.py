@@ -16,7 +16,7 @@ from dotenv import load_dotenv
 from config import *
 # 导入网关应用
 from hermes.hermes_integration import get_hermes_multi_agent_bridge
-from hermes.wechat_integration import get_qrcode, load_qrcode_status, save_qrcode_status, run_bot, poll_login_status, get_bot_info
+from hermes.wechat_integration import get_qrcode, load_qrcode_status, save_qrcode_status, run_bot, poll_login_status, get_bot_info, get_config
 import sys
 import asyncio
 import nest_asyncio
@@ -39,8 +39,8 @@ if "pending_config" not in st.session_state:
 if st.session_state.get('need_refresh', False):
     st.session_state['need_refresh'] = False
     st.rerun()
-if "bot_token_verify" not in st.session_state:
-    st.session_state.bot_token_verify = False
+# if "bot_token_verify" not in st.session_state:
+#     st.session_state.bot_token_verify = False
 
 # Gateway | FastAPI 实例
 bridge = get_hermes_multi_agent_bridge()
@@ -164,17 +164,15 @@ def start_login_and_bot_in_background(qrcode: str):
             qrcode_status = loop.run_until_complete(poll_login_status(qrcode))
 
             if not qrcode_status:
-                print(f"登录失败")
                 loop.close()
                 return
             # 2. 保存 qrcode_status
             save_qrcode_status(qrcode_status)
-            print(f"登录成功, bot_token: {qrcode_status.get('bot_token')}")
 
             # 3. 获取配置
-            config = loop.run_until_complete(get_bot_info(qrcode_status.get('bot_token')))
-            if config:
-                print(f"登录成功, 机器人名称: {config['bot_name']}")
+            # config = loop.run_until_complete(get_bot_info(qrcode_status.get('bot_token')))
+            # if config:
+            #     print(f"登录成功, 机器人名称: {config['bot_name']}")
 
             # 4. 自动启动机器人
             loop.run_until_complete(run_bot(qrcode_status.get('bot_token')))
@@ -230,17 +228,18 @@ with st.sidebar:
     if st.button("生成微信 ClawBot 登录二维码"):
         print("生成微信 ClawBot 登录二维码...")
         qrcode_result = asyncio.run(get_qrcode())
-        print(f"======================= qrcode_result: {qrcode_result} ===========================")
+        print(f"---------- qrcode_result: {qrcode_result} ----------")
         qrcode_url = qrcode_result.get('qrcode_img_content', '')
         qrcode = qrcode_result.get('qrcode', None)
-        print(f"======================= qrcode: {qrcode} ===========================")
+        print(f"---------- qrcode: {qrcode} ----------")
         # 启动后台登录流程(会自动轮询并启动机器人)
         start_login_and_bot_in_background(qrcode)
-        print(f"======================= 启动后台登录流程(会自动轮询并启动机器人) ===========================")
+        print(f"========== 启动后台登录流程(会自动轮询并启动机器人) ==========")
         st.markdown(f"[点击打开二维码链接扫码]({qrcode_url})", unsafe_allow_html=True)
         st.info("打开微信 -> 扫一扫 -> 扫描二维码")
 
-    st.warning("已实现: 鉴权|脱敏|熔断|降级|清洗|优化|人机协同|企业级审批流程|接入Hermes Agent提问(SKILL.md生成&gateway网关&API接口&WSL环境和Docker环境调用宿主机Ollama、Sqlite、Neo4j)")
+    st.warning("已实现: 鉴权|脱敏|熔断|降级|清洗|优化|人机协同|企业级审批流程|接入Hermes Agent(SKILL.md生成&gateway网关&API接口&WSL环境和Docker环境调用宿主机Ollama、Sqlite、Neo4j)|接入微信 ClawBot")
+    st.warning("工程化: Poetry依赖管理及虚拟环境|launch.json代码调试|Cython编译核心模块|PyArmor混淆加密|Docker容器化部署|")
 
 # 1. 智能问答
 with tab1:
@@ -449,5 +448,5 @@ if __name__ == "__main__":
             print("python hermes_integration.py serve # 启动 API 服务")
     
     # 检验 bot_token 是否有效
-    st.session_state.bot_token_verify = qrcode_status and asyncio.run(get_bot_info(qrcode_status.get("bot_token")))
-    print(f"已存储的 bot_token 有效性: {'是' if st.session_state.bot_token_verify else '否'}")
+    # st.session_state.bot_token_verify = qrcode_status and asyncio.run(get_bot_info(qrcode_status.get("bot_token"), "", ""))
+    # print(f"已存储的 bot_token 有效性: {'是' if st.session_state.bot_token_verify else '否'}")

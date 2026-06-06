@@ -6,3 +6,11 @@
 # 其他敏感文件
 *.key
 *.pem
+
+# 生产包
+dist
+
+# 虚拟环境
+.venv
+.venv_win
+venv

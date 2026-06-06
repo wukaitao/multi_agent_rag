@@ -3,7 +3,8 @@
     "configurations": [
 
         {
-            "name": "Streamlit - RAG前端全链路调试",
+            // 等价于 streamlit run app.py --server.port 8501
+            "name": "Streamlit-8501 - RAG前端全链路调试",
             "type": "python",
             "request": "launch",
             "module": "streamlit",
@@ -18,6 +19,7 @@
         },
 
         {
+            // 等价于app.py文件下的fastapi_app: uvicorn app:fastapi_app --host 0.0.0.0 --port 8000
             "name": "FastAPI-8000 - RAG后端API调试",
             "type": "python",
             "request": "launch",
@@ -34,6 +36,7 @@
         },
 
         {
+            // 等价于app.py文件下的Gateway: uvicorn app:Gateway --host 0.0.0.0 --port 8001
             "name": "Gateway-8001 - 网关调试",
             "type": "python",
             "request": "launch",

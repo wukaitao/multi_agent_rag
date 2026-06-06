@@ -8,19 +8,15 @@
 
 # 实现流程: 本地windows内网穿透(ngrok http 8001) -> 通过扫描二维码获取 bot_token -> [getConfig 获取账号配置 ->] getUpdates -> 处理消息(调用 Langgraph Agent) [-> getUploadUrl 上传文件到微信服务器]  -> sendMessage 回复消息给用户 -> sendTyping 控制输入状态
 """
-import requests
 import asyncio
 import httpx
 import os
 import json
 import base64
 import random
-from io import BytesIO
 from datetime import datetime
-from PIL import Image
 from typing import Optional, Dict, Any
-from main_graph import graph
-from config import BOT_BASE_URL, BOT_TYPE, BOT_QRCODE_URL, ANGET_API_URL, ANGET_REPLY_API_URL, TOKEN_PATH, QRCODE_STATUS_PATH
+from config import BOT_BASE_URL, BOT_TYPE, ANGET_API_URL, QRCODE_STATUS_PATH
 
 # ========== ClawBot 微信插件集成 ==========
 
@@ -44,7 +40,7 @@ async def get_updates(bot_token: str, get_updates_buf: str = ""):
             }
         ]
     """
-    print(f"========== get_updates bot_token: {bot_token} ========")
+    print(f"========== get_updates 节点 ==========")
     async with httpx.AsyncClient() as client:
         try:
             response = await client.post(
@@ -53,17 +49,14 @@ async def get_updates(bot_token: str, get_updates_buf: str = ""):
                 headers=build_headers(bot_token),
                 timeout=10
             )
-            print(f"\nheaders:\n{build_headers(bot_token)}\n")
             data = response.json()
-            print(f"========== getupdates success ==========")
-            print(f"========== getupdates response: {response} ==========")
-            print(f"========== data: {data} ==========")
+            print(f"---------- get_updates data: {data} ----------")
             get_updates_buf = data.get("get_updates_buf", "")
             msgs = data.get("msgs", [])
             return msgs, get_updates_buf
         except httpx.RequestError as e:
             # 长轮询超时是正常的
-            print(f"========== getupdates timeout ==========")
+            print(f"---------- get_updates timeout ----------")
             return [], get_updates_buf
         except Exception as e:
             print(f"get_updates 异常: {str(e)}")
@@ -76,7 +69,7 @@ async def send_message(bot_token, to_user_id, text, context_token, client_id: st
     type: 消息类型(text/image/voice/video/file)
     message_type: 1 固定值 - 单聊普通业务消息(图文/语音/文件/视频都归在此大类); 2 - 群消息; 3 - 系统通知; 4 - 事件推送（入群/被撤回等)
     """
-    print(f"========== send_message bot_token: {bot_token} ========")
+    print(f"========== send_message 节点 ==========")
     item_list = []
     if type == "text":
         item_list = [{
@@ -141,7 +134,7 @@ async def send_message(bot_token, to_user_id, text, context_token, client_id: st
             "message_state": 2
         }
     }
-    print(f"================== payload: {payload} ==================")
+    print(f"---------- send_message payload: {payload} ----------")
     
     async with httpx.AsyncClient() as client:
         response = await client.post(
@@ -149,13 +142,10 @@ async def send_message(bot_token, to_user_id, text, context_token, client_id: st
             json=payload,
             headers=build_headers(bot_token)
         )
-        print(f"========== send_message - response: {response} =========")
-        print(f"0000000000000000000000000000000000000000000000000000000000000000000000000000")
         if response.status_code == 200:
             result = response.json()
-            print(f"11111========== send_message - result: {result} =========11111")
-            print(f"22222========== send_message - ret: {result.get('ret')} =========22222")
-            print("成功发送消息..........................................")
+            print(f"---------- send_message result: {result} ----------")
+            print("成功发送消息..........")
             # 关闭[正在输入]状态
             await send_typing(bot_token, to_user_id, typing_ticket, 2)
         return response.status_code == 200
@@ -174,7 +164,7 @@ async def get_upload_url(bot_token: str,file_type: str = "image", file_size: int
             "expire_time": "2026-12-31T23:59:59Z"
         }
     """
-    print(f"========== get_upload_url bot_token: {bot_token} ========")
+    print(f"========== get_upload_url 节点 ==========")
     async with httpx.AsyncClient() as client:
         response = await client.post(
             f"{BOT_BASE_URL}/ilink/bot/getuploadurl",
@@ -210,7 +200,7 @@ async def get_config(bot_token: str, ilink_user_id: str, context_token: str):
             "expire_time": "凭证过期时间"
         }
     """
-    print(f"========== get_config bot_token: {bot_token} ========")
+    print(f"========== get_config 节点 ==========")
     async with httpx.AsyncClient() as client:
         response = await client.post(
             f"{BOT_BASE_URL}/ilink/bot/getconfig",
@@ -221,25 +211,18 @@ async def get_config(bot_token: str, ilink_user_id: str, context_token: str):
             headers=build_headers(bot_token),
             timeout=60
         )
-        print(f"ilink_user_id:\n{ilink_user_id}")
-        print(f"context_token:\n{context_token}")
-        print(f"\n555555555555555555555 response: {response} 5555555555555555555555555555\n\n")
 
         if response.status_code == 200:
-            print("\nuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuu\n")
             data = response.json()
-            print(f"\nuuuuuuuuuuuuuuuuuuuu data: {data} uuuuuuuuuuuuuuuuuuuuuuuuuuuu\n")
             if data.get("ret") == 0:
-                print(f"\nkkkkkkkkkkkkkkkkkk data.getdata: {data.get('data')} kkkkkkkkkkkkkkkkkkkkkkkk\n")
+                print(f"---------- get_config data: {data} ----------")
                 # data.typing_ticket # 正在输入凭证
                 # data.expire_time   # 凭证过期时间
                 return data
             else:
                 print(f"获取正在输入凭证失败: {data.get('ret')}")
-                print(f"============= {data} =============")
                 return None
         else:
-            print("\nrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrr\n")
             print(f"get_config HTTP错误: {response.status_code}")
             return None
 
@@ -253,7 +236,7 @@ async def send_typing(bot_token: str, ilink_user_id: str, typing_ticket: str, st
         "status": "1=开启正在输入(聊天框弹窗); 2=关闭正在输入(消失弹窗)"
         "base_info": "网关版本校验, 固定{'channel_version': '1.0.3'}"
     """
-    print(f"========== send_typing bot_token: {bot_token} ========")
+    print(f"========== send_typing 节点 ==========")
     async with httpx.AsyncClient() as client:
         response = await client.post(
             f"{BOT_BASE_URL}/ilink/bot/sendtyping",
@@ -271,7 +254,6 @@ async def send_typing(bot_token: str, ilink_user_id: str, typing_ticket: str, st
                 print(f"正在输入接口{'开启' if status == 1 else '取消'}成功")
             else:
                 print(f"正在输入接口操作失败: {data.get('ret')}")
-                print(f"============= {data} =============")
                 return None
         else:
             print(f"HTTP错误: {response.status_code}")
@@ -279,7 +261,7 @@ async def send_typing(bot_token: str, ilink_user_id: str, typing_ticket: str, st
 # ========== 6. getBotInfo 获取账号配置 ==========
 async def get_bot_info(bot_token: str):
     """
-    获取账号配置信息
+    获取账号配置信息[ClawBot尚未开放类似接口]
     Args:
     Returns:
         {
@@ -290,7 +272,7 @@ async def get_bot_info(bot_token: str):
             "supported_message_types": # 机器人支持收发的消息类型：文本 / 图片 / 语音 / 视频 / 文件 ["text", "image", "voice", "video", "file"]
         }
     """
-    print(f"========== get_bot_info bot_token: {bot_token} ========")
+    print(f"========== get_bot_info 节点 ==========")
     async with httpx.AsyncClient() as client:
         response = await client.post(
             f"{BOT_BASE_URL}/ilink/bot/getbotinfo",
@@ -301,9 +283,8 @@ async def get_bot_info(bot_token: str):
         print(f"headers:\n{build_headers(bot_token)}")
         if response.status_code == 200:
             data = response.json()
-            print(f"============= data: {data} =============")
             if data.get("ret") == 0:
-                print(f"============= get_bot_info: {data.get('data')} =============")
+                print(f"---------- get_bot_info data: {data.get('data')} ----------")
                 return data.get("data")
                 # return {
                 #     "bot_name": data.get("bot_name", "AI助手"),
@@ -323,7 +304,7 @@ async def get_bot_info(bot_token: str):
 
 async def handle_message(bot_token: str, msg: Dict[str, Any]):
     """处理消息: 调用你的 Langgraph Agent"""
-    print(f"========== handle_message bot_token: {bot_token} ========")
+    print(f"========== handle_message 节点 ==========")
     # msg["to_user_id"] 机器人自身ID(bot唯一标识)
     user_id = msg["from_user_id"]
     context_token = msg.get("context_token")
@@ -357,9 +338,8 @@ async def handle_message(bot_token: str, msg: Dict[str, Any]):
             )
             if response.status_code == 200:
                 result = response.json()
-                print(f"==================== 111111 result: {result} ==================")
                 response_text = result.get("response", "抱歉, 我无法回答这个问题.")
-                print(f"==================== 2222222222222 response_text: {response_text} ==================")
+                print(f"---------- handle_message response_text: {response_text} ----------")
                 response_image = result.get("image", "")
                 # 回复支持类型: 文本(text)/图片(image)/语音(voice)/视频(video)/文件(file)  # 判断 response_text 回复
                 # 发送回复
@@ -367,7 +347,6 @@ async def handle_message(bot_token: str, msg: Dict[str, Any]):
             else:
                 raise Exception(f"接口 HTTP 异常: {response.status_code}")
         except Exception as e:
-            print(f"==================== 000000000000000000 ==================")
             await send_message(bot_token, user_id, f"处理失败: {str(e)}", context_token, client_id, "text", typing_ticket)
 
 async def run_bot(bot_token: str):
@@ -380,9 +359,9 @@ async def run_bot(bot_token: str):
 
     while True:
         try:
-            print(f"\n========== start get_updates ==========")
+            print(f"========== run_bot 节点 ==========")
             messages, new_buf = await get_updates(bot_token, get_updates_buf)
-            print(f"========== messages, new_buf: {messages} {new_buf} ==========")
+            print(f"---------- messages, new_buf: {messages} {new_buf} ----------")
 
             if messages is None:
                 # 连接错误, 等待后重试
@@ -401,8 +380,8 @@ async def run_bot(bot_token: str):
 
 def build_headers(token):
     """构建请求头"""
-    print(f"========== build_headers bot_token: {token} ========")
-    print(f"========== randomWechatUin: {randomWechatUin()} ========")
+    print(f"---------- build_headers bot_token: {token} ----------")
+    print(f"---------- randomWechatUin: {randomWechatUin()} ----------")
     return {
         "Content-Type": "application/json",
         "AuthorizationType": "ilink_bot_token",
@@ -562,8 +541,9 @@ def load_qrcode_status():
 
 async def get_qrcode():
     """获取登录二维码"""
+    print(f"========== get_qrcode 节点 ==========")
     url = f"{BOT_BASE_URL}/ilink/bot/get_bot_qrcode?bot_type={BOT_TYPE}"
-    print(f"======================= url: {url} ===========================")
+    print(f"---------- get_qrcode url: {url} ----------")
     async with httpx.AsyncClient() as client:
         response = await client.get(url)
         result = response.json()
@@ -571,18 +551,18 @@ async def get_qrcode():
             print(f"获取二维码失败: {result.get('err_msg')}")
         
         # 直接调用主函数启动轮询登录状态
-        print(f"======================= 调用主函数: 获取二维码状态 - 账号配置 - 接收用户消息 - 处理信息[ - 上传资料] - 发送回复[正在输入] ===========================")
+        print(f"---------- 调用主函数: 获取二维码状态 - 账号配置 - 接收用户消息 - 处理信息[ - 上传资料] - 发送回复[正在输入] ----------")
 
         return result
     
 async def get_qrcode_status(qrcode: str) -> dict:
     """查询二维码状态"""
+    print(f"========== get_qrcode_status 节点 ==========")
     url = f"{BOT_BASE_URL}/ilink/bot/get_qrcode_status?qrcode={qrcode}"
-    print(f"======================= 查询二维码状态 url: {url} ===========================")
+    print(f"---------- get_qrcode_status url: {url} ----------")
     async with httpx.AsyncClient() as client:
         try:
             response = await client.get(url, timeout=60)
-            print(f"================ 666666666666666: {response} ===================")
             if response.status_code != 200:
                 print(f"查询二维码状态 HTTP错误: {response.status_code}")
                 return {
@@ -603,27 +583,26 @@ async def poll_login_status(qrcode: str):
     """
     轮询扫码状态
     wait:       等待扫码           ->   继续轮询
-    scanned:    已扫码, 等待确认    ->   继续轮询
+    scaned:    已扫码, 等待确认    ->   继续轮询
     confirmed:  已确认, 返回 token ->   保存凭证, 退出
     expired:    二维码已过期       ->   刷新二维码
     """
-    print(f"================ 777777777777777777 ===================")
+    print(f"========== poll_login_status 节点 ==========")
     while True:
         result = await get_qrcode_status(qrcode)
         status = result.get("status")
         if status == "wait":
             print("等待扫码...")
-        elif status == "scanned":
+        elif status == "scaned":
             print("扫码已完成, 请在手机上点击确认...")
         elif status == "confirmed":
             # 获取 qrcode_status 并保存
             bot_token = result.get("bot_token", "")
-            print(f"================ 8888888888888888 =====================")
-            print(f"================ /ilink/bot/get_qrcode_status result: {result} =====================")
+            print(f"---------- poll_login_status result: {result} ----------")
             print(f"登录成功, bot_token: {bot_token}")
             return result
         elif status == "expired":
-            print(f"二维码已过期, 请重新生成二维码")
+            print(f"二维码已过期, 请点击按钮重新生成二维码")
             return None
         else:
             print(f"未知状态: {status}, 信息: {result}")
