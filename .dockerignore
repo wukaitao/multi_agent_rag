@@ -1,0 +1,46 @@
+# .dockerignore
+# 虚拟环境
+.venv
+venv
+_venv
+_venv_win
+.venv_win
+
+# Python 缓存
+__pycache__
+*.pyc
+*.pyo
+*.pyd
+
+# IDE 配置
+.vscode
+.idea
+*.swp
+*.swo
+
+# Git
+.git
+.gitignore
+
+# Docker
+Dockerfile
+.dockerignore
+docker-compose*.yml
+
+# 日志和临时文件
+*.log
+*.tmp
+temp/
+memory/
+
+# 测试和文档
+data/
+tests/
+docs/
+*.md
+!README.md
+
+# 其他
+.env*.local
+*.db
+*.sqlite3
