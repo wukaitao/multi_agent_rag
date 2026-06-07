@@ -29,7 +29,8 @@ dependencies = [
     "fastapi (==0.136.1)",
     "uvicorn (==0.44.0)",
     "neo4j-graphrag (==1.16.1)",
-    "pywin32 (>=312,<313)"
+    "pywin32 (>=312,<313)",
+    "cryptography (>=48.0.0,<49.0.0)"
 ]
 
 
