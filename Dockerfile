@@ -5,14 +5,20 @@ FROM python:3.13.12-slim AS builder
 
 WORKDIR /app
 
+# 配置 pip 国内镜像源
+RUN pip config set global.index-url https://pypi.tuna.tsinghua.edu.cn/simple
+
 # 复制依赖文件
 COPY pyproject.toml poetry.lock ./
+# COPY pyproject.toml ./
 
 # 安装 Poetry
 RUN pip install --no-cache-dir poetry==2.4.1
 
 # 安装依赖(不安装开发依赖)
 RUN poetry config virtualenvs.create false && poetry install --without dev --no-interaction --no-ansi --no-root
+# RUN poetry config virtualenvs.create false
+# RUN poetry install --without dev --no-interaction --no-ansi --no-root
 
 # 第二阶段: 运行阶段
 FROM python:3.13.12-slim
@@ -25,7 +31,7 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     && rm -rf /var/lib/apt/lists/*
 
 # 从构建阶段复制依赖
-COPY --from=builder /usr/local/lib/python3.10/site-packages /usr/local/lib/python3.10/site-packages
+COPY --from=builder /usr/local/lib/python3.13/site-packages /usr/local/lib/python3.13/site-packages
 COPY --from=builder /usr/local/bin /usr/local/bin
 
 # 复制项目代码
