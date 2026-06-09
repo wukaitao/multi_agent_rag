@@ -6,13 +6,11 @@ echo "开始部署 Multi_Agent_RAG 系统..."
 
 # 1. 检验环境
 command -v docker >/dev/null 2>&1 || { echo "需要 Docker"; exit 1; }
-command -v docker >/dev/null 2>&1 && echo "✅ Docker 已安装"
-# command -v docker compose >/dev/null 2>&1 || { echo "需要 Docker Compose"; exit 1; }
+command -v docker >/dev/null 2>&1 && echo "Docker 已安装"
 
 # 2. 加载环境变量
 echo "加载环境变量"
 if [ -f .env.prod ]; then
-    # export $(cat .env.prod | grep -v '^#' | xargs)
     # 安全加载环境变量
     set -a
     source .env.prod
@@ -21,27 +19,11 @@ if [ -f .env.prod ]; then
 else
     echo ".env.prod 不存在, 使用默认配置"
 fi
+echo "PROTECT_CODE = $PROTECT_CODE"
 
 # 3. 构建镜像
 echo "构建 Docker 镜像..."
-docker build --no-cache -t multi-agent-rag:latest .
-
-# 4. 代码保护方式(可选)
-if [ "$PROTECT_CODE" = "Cython" ]; then
-    # 编译 Cython 模块
-    echo "编译 Cython 模块..."
-    docker run --rm -v $(PWD):/app multi-agent-rag:latest python setup.py build_ext --inplace
-elif [ "$PROTECT_CODE" = "Pyarmor" ]; then
-    # 使用 Pyarmor 加密
-    echo "Pyarmor 加密..."
-    docker run --rm -v $(PWD):/app multi-agent-rag:latest pyarmor gen -r -O dist agents core hermes database tools app.py config.py main_graph.py --exclude ".venv" --exclude ".venv_win" --exclude "venv" --exclude "__pycache__" --exclude "dist"
-elif [ "$PROTECT_CODE" = "Hybrid" ]; then
-    # 使用 Hybrid 模式, 核心模块用 Cython 编译, 其他模块用 Pyarmor 加密
-    echo "核心模块用 Cython 编译, 其他模块用 Pyarmor 加密..."
-    # docker run --rm -v $(PWD):/app multi-agent-rag:latest python setup.py build_ext --inplace
-else
-    echo "跳过代码保护 (PROTECT_CODE=$PROTECT_CODE)"
-fi
+docker build --no-cache --build-arg PROTECT_CODE=$PROTECT_CODE -t multi-agent-rag:latest . # --no-cache
 
 # 5. 启动服务
 echo "启动所有服务..."
