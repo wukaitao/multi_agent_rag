@@ -1,0 +1,508 @@
+
+Collecting usage statistics. To deactivate, set browser.gatherUsageStats to false.
+
+
+  You can now view your Streamlit app in your browser.
+
+  Local URL: http://localhost:8501
+  Network URL: http://172.18.0.2:8501
+  External URL: http://36.50.131.21:8501
+
+  Stopping...
+
+Collecting usage statistics. To deactivate, set browser.gatherUsageStats to false.
+
+
+  You can now view your Streamlit app in your browser.
+
+  Local URL: http://localhost:8501
+  Network URL: http://172.18.0.4:8501
+  External URL: http://36.50.131.21:8501
+
+  Stopping...
+
+Collecting usage statistics. To deactivate, set browser.gatherUsageStats to false.
+
+
+  You can now view your Streamlit app in your browser.
+
+  Local URL: http://localhost:8501
+  Network URL: http://172.18.0.4:8501
+  External URL: http://122.10.198.79:8501
+
+  Stopping...
+
+Collecting usage statistics. To deactivate, set browser.gatherUsageStats to false.
+
+
+  You can now view your Streamlit app in your browser.
+
+  Local URL: http://localhost:8501
+  Network URL: http://172.18.0.4:8501
+  External URL: http://122.10.198.79:8501
+
+  Stopping...
+
+Collecting usage statistics. To deactivate, set browser.gatherUsageStats to false.
+
+
+  You can now view your Streamlit app in your browser.
+
+  Local URL: http://localhost:8501
+  Network URL: http://172.18.0.4:8501
+  External URL: http://122.10.198.79:8501
+
+  Stopping...
+
+Collecting usage statistics. To deactivate, set browser.gatherUsageStats to false.
+
+
+  You can now view your Streamlit app in your browser.
+
+  Local URL: http://localhost:8501
+  Network URL: http://172.18.0.4:8501
+  External URL: http://122.10.198.79:8501
+
+[31m──[0m[31m────────────────────────[0m[31m [0m[1;31mTraceback [0m[1;2;31m(most recent call last)[0m[31m [0m[31m─────────────────────────[0m[31m──[0m
+[31m [0m [2m/usr/local/lib/python3.13/site-packages/streamlit/runtime/scriptrunner/[0m[1mexec_code.py[0m: [31m [0m
+[31m [0m 129 in exec_func_with_error_handling                                                 [31m [0m
+[31m [0m                                                                                      [31m [0m
+[31m [0m [2m/usr/local/lib/python3.13/site-packages/streamlit/runtime/scriptrunner/[0m[1mscript_runner[0m [31m [0m
+[31m [0m [1m.py[0m:689 in code_to_exec                                                              [31m [0m
+[31m [0m in <module>:3                                                                        [31m [0m
+[31m────────────────────────────────────────────────────────────────────────────────────────[0m
+[1;91mRuntimeError: [0munauthorized use of script [1m([0m[1;92m1:1170[0m[1m)[0m
+[31m──[0m[31m────────────────────────[0m[31m [0m[1;31mTraceback [0m[1;2;31m(most recent call last)[0m[31m [0m[31m─────────────────────────[0m[31m──[0m
+[31m [0m [2m/usr/local/lib/python3.13/site-packages/streamlit/runtime/scriptrunner/[0m[1mexec_code.py[0m: [31m [0m
+[31m [0m 129 in exec_func_with_error_handling                                                 [31m [0m
+[31m [0m                                                                                      [31m [0m
+[31m [0m [2m/usr/local/lib/python3.13/site-packages/streamlit/runtime/scriptrunner/[0m[1mscript_runner[0m [31m [0m
+[31m [0m [1m.py[0m:689 in code_to_exec                                                              [31m [0m
+[31m [0m in <module>:3                                                                        [31m [0m
+[31m────────────────────────────────────────────────────────────────────────────────────────[0m
+[1;91mRuntimeError: [0munauthorized use of script [1m([0m[1;92m1:1170[0m[1m)[0m
+[31m──[0m[31m────────────────────────[0m[31m [0m[1;31mTraceback [0m[1;2;31m(most recent call last)[0m[31m [0m[31m─────────────────────────[0m[31m──[0m
+[31m [0m [2m/usr/local/lib/python3.13/site-packages/streamlit/runtime/scriptrunner/[0m[1mexec_code.py[0m: [31m [0m
+[31m [0m 129 in exec_func_with_error_handling                                                 [31m [0m
+[31m [0m                                                                                      [31m [0m
+[31m [0m [2m/usr/local/lib/python3.13/site-packages/streamlit/runtime/scriptrunner/[0m[1mscript_runner[0m [31m [0m
+[31m [0m [1m.py[0m:689 in code_to_exec                                                              [31m [0m
+[31m [0m in <module>:3                                                                        [31m [0m
+[31m────────────────────────────────────────────────────────────────────────────────────────[0m
+[1;91mRuntimeError: [0mthe format of obfuscated script is incorrect [1m([0m[1;92m1:1144[0m[1m)[0m
+[31m──[0m[31m────────────────────────[0m[31m [0m[1;31mTraceback [0m[1;2;31m(most recent call last)[0m[31m [0m[31m─────────────────────────[0m[31m──[0m
+[31m [0m [2m/usr/local/lib/python3.13/site-packages/streamlit/runtime/scriptrunner/[0m[1mexec_code.py[0m: [31m [0m
+[31m [0m 129 in exec_func_with_error_handling                                                 [31m [0m
+[31m [0m                                                                                      [31m [0m
+[31m [0m [2m/usr/local/lib/python3.13/site-packages/streamlit/runtime/scriptrunner/[0m[1mscript_runner[0m [31m [0m
+[31m [0m [1m.py[0m:689 in code_to_exec                                                              [31m [0m
+[31m [0m in <module>:3                                                                        [31m [0m
+[31m────────────────────────────────────────────────────────────────────────────────────────[0m
+[1;91mRuntimeError: [0mthe format of obfuscated script is incorrect [1m([0m[1;92m1:1144[0m[1m)[0m
+[31m──[0m[31m────────────────────────[0m[31m [0m[1;31mTraceback [0m[1;2;31m(most recent call last)[0m[31m [0m[31m─────────────────────────[0m[31m──[0m
+[31m [0m [2m/usr/local/lib/python3.13/site-packages/streamlit/runtime/scriptrunner/[0m[1mexec_code.py[0m: [31m [0m
+[31m [0m 129 in exec_func_with_error_handling                                                 [31m [0m
+[31m [0m                                                                                      [31m [0m
+[31m [0m [2m/usr/local/lib/python3.13/site-packages/streamlit/runtime/scriptrunner/[0m[1mscript_runner[0m [31m [0m
+[31m [0m [1m.py[0m:689 in code_to_exec                                                              [31m [0m
+[31m [0m in <module>:3                                                                        [31m [0m
+[31m────────────────────────────────────────────────────────────────────────────────────────[0m
+[1;91mRuntimeError: [0mthe format of obfuscated script is incorrect [1m([0m[1;92m1:1144[0m[1m)[0m
+[31m──[0m[31m────────────────────────[0m[31m [0m[1;31mTraceback [0m[1;2;31m(most recent call last)[0m[31m [0m[31m─────────────────────────[0m[31m──[0m
+[31m [0m [2m/usr/local/lib/python3.13/site-packages/streamlit/runtime/scriptrunner/[0m[1mexec_code.py[0m: [31m [0m
+[31m [0m 129 in exec_func_with_error_handling                                                 [31m [0m
+[31m [0m                                                                                      [31m [0m
+[31m [0m [2m/usr/local/lib/python3.13/site-packages/streamlit/runtime/scriptrunner/[0m[1mscript_runner[0m [31m [0m
+[31m [0m [1m.py[0m:689 in code_to_exec                                                              [31m [0m
+[31m [0m in <module>:3                                                                        [31m [0m
+[31m────────────────────────────────────────────────────────────────────────────────────────[0m
+[1;91mRuntimeError: [0mthe format of obfuscated script is incorrect [1m([0m[1;92m1:1144[0m[1m)[0m
+[31m──[0m[31m────────────────────────[0m[31m [0m[1;31mTraceback [0m[1;2;31m(most recent call last)[0m[31m [0m[31m─────────────────────────[0m[31m──[0m
+[31m [0m [2m/usr/local/lib/python3.13/site-packages/streamlit/runtime/scriptrunner/[0m[1mexec_code.py[0m: [31m [0m
+[31m [0m 129 in exec_func_with_error_handling                                                 [31m [0m
+[31m [0m                                                                                      [31m [0m
+[31m [0m [2m/usr/local/lib/python3.13/site-packages/streamlit/runtime/scriptrunner/[0m[1mscript_runner[0m [31m [0m
+[31m [0m [1m.py[0m:689 in code_to_exec                                                              [31m [0m
+[31m [0m in <module>:3                                                                        [31m [0m
+[31m────────────────────────────────────────────────────────────────────────────────────────[0m
+[1;91mRuntimeError: [0mthe format of obfuscated script is incorrect [1m([0m[1;92m1:1144[0m[1m)[0m
+[31m──[0m[31m────────────────────────[0m[31m [0m[1;31mTraceback [0m[1;2;31m(most recent call last)[0m[31m [0m[31m─────────────────────────[0m[31m──[0m
+[31m [0m [2m/usr/local/lib/python3.13/site-packages/streamlit/runtime/scriptrunner/[0m[1mexec_code.py[0m: [31m [0m
+[31m [0m 129 in exec_func_with_error_handling                                                 [31m [0m
+[31m [0m                                                                                      [31m [0m
+[31m [0m [2m/usr/local/lib/python3.13/site-packages/streamlit/runtime/scriptrunner/[0m[1mscript_runner[0m [31m [0m
+[31m [0m [1m.py[0m:689 in code_to_exec                                                              [31m [0m
+[31m [0m in <module>:3                                                                        [31m [0m
+[31m────────────────────────────────────────────────────────────────────────────────────────[0m
+[1;91mRuntimeError: [0mthe format of obfuscated script is incorrect [1m([0m[1;92m1:1144[0m[1m)[0m
+[31m──[0m[31m────────────────────────[0m[31m [0m[1;31mTraceback [0m[1;2;31m(most recent call last)[0m[31m [0m[31m─────────────────────────[0m[31m──[0m
+[31m [0m [2m/usr/local/lib/python3.13/site-packages/streamlit/runtime/scriptrunner/[0m[1mexec_code.py[0m: [31m [0m
+[31m [0m 129 in exec_func_with_error_handling                                                 [31m [0m
+[31m [0m                                                                                      [31m [0m
+[31m [0m [2m/usr/local/lib/python3.13/site-packages/streamlit/runtime/scriptrunner/[0m[1mscript_runner[0m [31m [0m
+[31m [0m [1m.py[0m:689 in code_to_exec                                                              [31m [0m
+[31m [0m in <module>:3                                                                        [31m [0m
+[31m────────────────────────────────────────────────────────────────────────────────────────[0m
+[1;91mRuntimeError: [0mthe format of obfuscated script is incorrect [1m([0m[1;92m1:1144[0m[1m)[0m
+  Stopping...
+
+Collecting usage statistics. To deactivate, set browser.gatherUsageStats to false.
+
+
+  You can now view your Streamlit app in your browser.
+
+  Local URL: http://localhost:8501
+  Network URL: http://172.18.0.4:8501
+  External URL: http://122.10.198.79:8501
+
+[31m──[0m[31m────────────────────────[0m[31m [0m[1;31mTraceback [0m[1;2;31m(most recent call last)[0m[31m [0m[31m─────────────────────────[0m[31m──[0m
+[31m [0m [2m/usr/local/lib/python3.13/site-packages/streamlit/runtime/scriptrunner/[0m[1mexec_code.py[0m: [31m [0m
+[31m [0m 129 in exec_func_with_error_handling                                                 [31m [0m
+[31m [0m                                                                                      [31m [0m
+[31m [0m [2m/usr/local/lib/python3.13/site-packages/streamlit/runtime/scriptrunner/[0m[1mscript_runner[0m [31m [0m
+[31m [0m [1m.py[0m:689 in code_to_exec                                                              [31m [0m
+[31m [0m                                                                                      [31m [0m
+[31m [0m [2m/app/[0m[1mapp.py[0m:2 in <module>                                                            [31m [0m
+[31m [0m                                                                                      [31m [0m
+[31m [0m   [2m  1 [0m[94mimport[0m[90m [0m[4;96mstreamlit[0m[90m [0m[94mas[0m[90m [0m[4;96mst[0m                                                         [31m [0m
+[31m [0m [31m❱ [0m  2 [1;4;94mfrom[0m[1;4;90m [0m[1;4;96mmain_graph[0m[1;4;90m [0m[1;4;94mimport[0m[1;4m graph[0m                                                   [31m [0m
+[31m [0m   [2m  3 [0m[94mfrom[0m[90m [0m[4;96mdatabase[0m[4;96m.[0m[4;96mchroma_conn[0m[90m [0m[94mimport[0m upload_file_to_vector                         [31m [0m
+[31m [0m   [2m  4 [0m[94mfrom[0m[90m [0m[4;96mdatabase[0m[4;96m.[0m[4;96mneo4j_conn[0m[90m [0m[94mimport[0m batch_create_triples, batch_import_triples_wit [31m [0m
+[31m [0m   [2m  5 [0m[94mfrom[0m[90m [0m[4;96mcore[0m[4;96m.[0m[4;96mcleaner[0m[90m [0m[94mimport[0m clean_filename                                        [31m [0m
+[31m [0m                                                                                      [31m [0m
+[31m [0m [2m/app/[0m[1mmain_graph.py[0m:4 in <module>                                                     [31m [0m
+[31m [0m                                                                                      [31m [0m
+[31m [0m   [2m 1 [0m[94mimport[0m[90m [0m[4;96mos[0m                                                                       [31m [0m
+[31m [0m   [2m 2 [0m[94mfrom[0m[90m [0m[4;96mlanggraph[0m[4;96m.[0m[4;96mgraph[0m[90m [0m[94mimport[0m StateGraph, END                                     [31m [0m
+[31m [0m   [2m 3 [0m[94mfrom[0m[90m [0m[4;96mlanggraph[0m[4;96m.[0m[4;96mcheckpoint[0m[4;96m.[0m[4;96mmemory[0m[90m [0m[94mimport[0m MemorySaver                             [31m [0m
+[31m [0m [31m❱ [0m 4 [1;4;94mfrom[0m[1;4;90m [0m[1;4;96magents[0m[1;4;96m.[0m[1;4;96msupervisor_agent[0m[1;4;90m [0m[1;4;94mimport[0m[1;4m AgentState, semantic_supervisor_node[0m        [31m [0m
+[31m [0m   [2m 5 [0m[94mfrom[0m[90m [0m[4;96magents[0m[4;96m.[0m[4;96mrag_agent[0m[90m [0m[94mimport[0m rag_agent_node                                     [31m [0m
+[31m [0m   [2m 6 [0m[94mfrom[0m[90m [0m[4;96magents[0m[4;96m.[0m[4;96mmultimodal_agent[0m[90m [0m[94mimport[0m multimodal_agent_node                       [31m [0m
+[31m [0m   [2m 7 [0m[94mfrom[0m[90m [0m[4;96magents[0m[4;96m.[0m[4;96mtool_agent[0m[90m [0m[94mimport[0m tool_agent_node                                   [31m [0m
+[31m [0m                                                                                      [31m [0m
+[31m [0m [2m/app/agents/[0m[1msupervisor_agent.py[0m:4 in <module>                                        [31m [0m
+[31m [0m                                                                                      [31m [0m
+[31m [0m   [2m 1 [0m[94mfrom[0m[90m [0m[4;96mtyping[0m[90m [0m[94mimport[0m TypedDict, Optional                                          [31m [0m
+[31m [0m   [2m 2 [0m[94mfrom[0m[90m [0m[4;96mcore[0m[4;96m.[0m[4;96msecurity[0m[90m [0m[94mimport[0m check_auth, rate_limit                                [31m [0m
+[31m [0m   [2m 3 [0m[94mfrom[0m[90m [0m[4;96mcore[0m[4;96m.[0m[4;96mcleaner[0m[90m [0m[94mimport[0m clean_text                                             [31m [0m
+[31m [0m [31m❱ [0m 4 [1;4;94mfrom[0m[1;4;90m [0m[1;4;96mhermes[0m[1;4;96m.[0m[1;4;96mhermes_integration[0m[1;4;90m [0m[1;4;94mimport[0m[1;4m get_hermes_multi_agent_bridge[0m             [31m [0m
+[31m [0m   [2m 5 [0m                                                                                [31m [0m
+[31m [0m   [2m 6 [0m[94mclass[0m[90m [0m[4;92mAgentState[0m(TypedDict):                                                    [31m [0m
+[31m [0m   [2m 7 [0m[2m│   [0muser: [96mstr[0m                                                                   [31m [0m
+[31m [0m                                                                                      [31m [0m
+[31m [0m [2m/app/hermes/[0m[1mhermes_integration.py[0m:17 in <module>                                     [31m [0m
+[31m [0m                                                                                      [31m [0m
+[31m [0m   [2m 14 [0m[94mfrom[0m[90m [0m[4;96mpydantic[0m[90m [0m[94mimport[0m BaseModel                                                 [31m [0m
+[31m [0m   [2m 15 [0m[94mfrom[0m[90m [0m[4;96mcontextlib[0m[90m [0m[94mimport[0m asynccontextmanager                                     [31m [0m
+[31m [0m   [2m 16 [0m[94mfrom[0m[90m [0m[4;96mllama_index[0m[4;96m.[0m[4;96mllms[0m[4;96m.[0m[4;96mollama[0m[90m [0m[94mimport[0m Ollama                                     [31m [0m
+[31m [0m [31m❱ [0m 17 [1;4;94mfrom[0m[1;4;90m [0m[1;4;96magents[0m[1;4;96m.[0m[1;4;96mcomponent[0m[1;4;96m.[0m[1;4;96mapproval_database_agent[0m[1;4;90m [0m[1;4;94mimport[0m[1;4m handle_delete_kg[0m          [31m [0m
+[31m [0m   [2m 18 [0m[94mfrom[0m[90m [0m[4;96mdatabase[0m[4;96m.[0m[4;96msql[0m[4;96m.[0m[4;96msql_clawbot[0m[90m [0m[94mimport[0m log_message_queue, get_message_queue      [31m [0m
+[31m [0m   [2m 19 [0m[94mfrom[0m[90m [0m[4;96mconfig[0m[90m [0m[94mimport[0m *                                                           [31m [0m
+[31m [0m   [2m 20 [0m                                                                               [31m [0m
+[31m [0m                                                                                      [31m [0m
+[31m [0m [2m/app/agents/component/[0m[1mapproval_database_agent.py[0m:6 in <module>                       [31m [0m
+[31m [0m                                                                                      [31m [0m
+[31m [0m   [2m  3 [0m[94mfrom[0m[90m [0m[4;96mtyping[0m[90m [0m[94mimport[0m Dict, Any                                                   [31m [0m
+[31m [0m   [2m  4 [0m[94mfrom[0m[90m [0m[4;96mlanggraph[0m[4;96m.[0m[4;96mtypes[0m[90m [0m[94mimport[0m interrupt                                          [31m [0m
+[31m [0m   [2m  5 [0m[94mfrom[0m[90m [0m[4;96mdatabase[0m[4;96m.[0m[4;96mneo4j_conn[0m[90m [0m[94mimport[0m _neo4j_conn                                    [31m [0m
+[31m [0m [31m❱ [0m  6 [1;4;94mfrom[0m[1;4;90m [0m[1;4;96mcore[0m[1;4;96m.[0m[1;4;96mmemory_manager[0m[1;4;90m [0m[1;4;94mimport[0m[1;4m save_long_memory[0m                               [31m [0m
+[31m [0m   [2m  7 [0m[94mfrom[0m[90m [0m[4;96mcore[0m[4;96m.[0m[4;96msecurity[0m[90m [0m[94mimport[0m data_desensitize                                     [31m [0m
+[31m [0m   [2m  8 [0m[94mfrom[0m[90m [0m[4;96magents[0m[4;96m.[0m[4;96mcomponent[0m[4;96m.[0m[4;96mapproval_workflow_agent[0m[90m [0m[94mimport[0m log_to_sqlite, update_log [31m [0m
+[31m [0m   [2m  9 [0m                                                                               [31m [0m
+[31m [0m                                                                                      [31m [0m
+[31m [0m [2m/app/core/[0m[1mmemory_manager.py[0m:42 in <module>                                           [31m [0m
+[31m [0m                                                                                      [31m [0m
+[31m [0m   [2m39 [0m[2m│   [0mconn.close()                                                                [31m [0m
+[31m [0m   [2m40 [0m[2m│   [0m[94mreturn[0m res                                                                  [31m [0m
+[31m [0m   [2m41 [0m                                                                                [31m [0m
+[31m [0m [31m❱ [0m42 [1;4minit_long_memory()[0m                                                              [31m [0m
+[31m [0m   [2m43 [0m                                                                                [31m [0m
+[31m [0m                                                                                      [31m [0m
+[31m [0m [2m/app/core/[0m[1mmemory_manager.py[0m:19 in init_long_memory                                   [31m [0m
+[31m [0m                                                                                      [31m [0m
+[31m [0m   [2m16 [0m                                                                                [31m [0m
+[31m [0m   [2m17 [0m[2m# 长期记忆(SQLite持久化)[0m                                                        [31m [0m
+[31m [0m   [2m18 [0m[94mdef[0m[90m [0m[92minit_long_memory[0m():                                                         [31m [0m
+[31m [0m [31m❱ [0m19 [2m│   [0mconn = [1;4msqlite3.connect(MEMORY_DB)[0m                                           [31m [0m
+[31m [0m   [2m20 [0m[2m│   [0mc = conn.cursor()                                                           [31m [0m
+[31m [0m   [2m21 [0m[2m│   [0mc.execute([33m'''[0m[33mCREATE TABLE IF NOT EXISTS long_memory [0m                        [31m [0m
+[31m [0m   [2m22 [0m[2;33m│   │   │   │   [0m[33m(user TEXT,content TEXT,time TEXT)[0m[33m'''[0m)                          [31m [0m
+[31m────────────────────────────────────────────────────────────────────────────────────────[0m
+[1;91mOperationalError: [0munable to open database file
+[31m──[0m[31m────────────────────────[0m[31m [0m[1;31mTraceback [0m[1;2;31m(most recent call last)[0m[31m [0m[31m─────────────────────────[0m[31m──[0m
+[31m [0m [2m/usr/local/lib/python3.13/site-packages/streamlit/runtime/scriptrunner/[0m[1mexec_code.py[0m: [31m [0m
+[31m [0m 129 in exec_func_with_error_handling                                                 [31m [0m
+[31m [0m                                                                                      [31m [0m
+[31m [0m [2m/usr/local/lib/python3.13/site-packages/streamlit/runtime/scriptrunner/[0m[1mscript_runner[0m [31m [0m
+[31m [0m [1m.py[0m:689 in code_to_exec                                                              [31m [0m
+[31m [0m                                                                                      [31m [0m
+[31m [0m [2m/app/[0m[1mapp.py[0m:2 in <module>                                                            [31m [0m
+[31m [0m                                                                                      [31m [0m
+[31m [0m   [2m  1 [0m[94mimport[0m[90m [0m[4;96mstreamlit[0m[90m [0m[94mas[0m[90m [0m[4;96mst[0m                                                         [31m [0m
+[31m [0m [31m❱ [0m  2 [1;4;94mfrom[0m[1;4;90m [0m[1;4;96mmain_graph[0m[1;4;90m [0m[1;4;94mimport[0m[1;4m graph[0m                                                   [31m [0m
+[31m [0m   [2m  3 [0m[94mfrom[0m[90m [0m[4;96mdatabase[0m[4;96m.[0m[4;96mchroma_conn[0m[90m [0m[94mimport[0m upload_file_to_vector                         [31m [0m
+[31m [0m   [2m  4 [0m[94mfrom[0m[90m [0m[4;96mdatabase[0m[4;96m.[0m[4;96mneo4j_conn[0m[90m [0m[94mimport[0m batch_create_triples, batch_import_triples_wit [31m [0m
+[31m [0m   [2m  5 [0m[94mfrom[0m[90m [0m[4;96mcore[0m[4;96m.[0m[4;96mcleaner[0m[90m [0m[94mimport[0m clean_filename                                        [31m [0m
+[31m [0m                                                                                      [31m [0m
+[31m [0m [2m/app/[0m[1mmain_graph.py[0m:4 in <module>                                                     [31m [0m
+[31m [0m                                                                                      [31m [0m
+[31m [0m   [2m 1 [0m[94mimport[0m[90m [0m[4;96mos[0m                                                                       [31m [0m
+[31m [0m   [2m 2 [0m[94mfrom[0m[90m [0m[4;96mlanggraph[0m[4;96m.[0m[4;96mgraph[0m[90m [0m[94mimport[0m StateGraph, END                                     [31m [0m
+[31m [0m   [2m 3 [0m[94mfrom[0m[90m [0m[4;96mlanggraph[0m[4;96m.[0m[4;96mcheckpoint[0m[4;96m.[0m[4;96mmemory[0m[90m [0m[94mimport[0m MemorySaver                             [31m [0m
+[31m [0m [31m❱ [0m 4 [1;4;94mfrom[0m[1;4;90m [0m[1;4;96magents[0m[1;4;96m.[0m[1;4;96msupervisor_agent[0m[1;4;90m [0m[1;4;94mimport[0m[1;4m AgentState, semantic_supervisor_node[0m        [31m [0m
+[31m [0m   [2m 5 [0m[94mfrom[0m[90m [0m[4;96magents[0m[4;96m.[0m[4;96mrag_agent[0m[90m [0m[94mimport[0m rag_agent_node                                     [31m [0m
+[31m [0m   [2m 6 [0m[94mfrom[0m[90m [0m[4;96magents[0m[4;96m.[0m[4;96mmultimodal_agent[0m[90m [0m[94mimport[0m multimodal_agent_node                       [31m [0m
+[31m [0m   [2m 7 [0m[94mfrom[0m[90m [0m[4;96magents[0m[4;96m.[0m[4;96mtool_agent[0m[90m [0m[94mimport[0m tool_agent_node                                   [31m [0m
+[31m [0m                                                                                      [31m [0m
+[31m [0m [2m/app/agents/[0m[1msupervisor_agent.py[0m:4 in <module>                                        [31m [0m
+[31m [0m                                                                                      [31m [0m
+[31m [0m   [2m 1 [0m[94mfrom[0m[90m [0m[4;96mtyping[0m[90m [0m[94mimport[0m TypedDict, Optional                                          [31m [0m
+[31m [0m   [2m 2 [0m[94mfrom[0m[90m [0m[4;96mcore[0m[4;96m.[0m[4;96msecurity[0m[90m [0m[94mimport[0m check_auth, rate_limit                                [31m [0m
+[31m [0m   [2m 3 [0m[94mfrom[0m[90m [0m[4;96mcore[0m[4;96m.[0m[4;96mcleaner[0m[90m [0m[94mimport[0m clean_text                                             [31m [0m
+[31m [0m [31m❱ [0m 4 [1;4;94mfrom[0m[1;4;90m [0m[1;4;96mhermes[0m[1;4;96m.[0m[1;4;96mhermes_integration[0m[1;4;90m [0m[1;4;94mimport[0m[1;4m get_hermes_multi_agent_bridge[0m             [31m [0m
+[31m [0m   [2m 5 [0m                                                                                [31m [0m
+[31m [0m   [2m 6 [0m[94mclass[0m[90m [0m[4;92mAgentState[0m(TypedDict):                                                    [31m [0m
+[31m [0m   [2m 7 [0m[2m│   [0muser: [96mstr[0m                                                                   [31m [0m
+[31m [0m                                                                                      [31m [0m
+[31m [0m [2m/app/hermes/[0m[1mhermes_integration.py[0m:17 in <module>                                     [31m [0m
+[31m [0m                                                                                      [31m [0m
+[31m [0m   [2m 14 [0m[94mfrom[0m[90m [0m[4;96mpydantic[0m[90m [0m[94mimport[0m BaseModel                                                 [31m [0m
+[31m [0m   [2m 15 [0m[94mfrom[0m[90m [0m[4;96mcontextlib[0m[90m [0m[94mimport[0m asynccontextmanager                                     [31m [0m
+[31m [0m   [2m 16 [0m[94mfrom[0m[90m [0m[4;96mllama_index[0m[4;96m.[0m[4;96mllms[0m[4;96m.[0m[4;96mollama[0m[90m [0m[94mimport[0m Ollama                                     [31m [0m
+[31m [0m [31m❱ [0m 17 [1;4;94mfrom[0m[1;4;90m [0m[1;4;96magents[0m[1;4;96m.[0m[1;4;96mcomponent[0m[1;4;96m.[0m[1;4;96mapproval_database_agent[0m[1;4;90m [0m[1;4;94mimport[0m[1;4m handle_delete_kg[0m          [31m [0m
+[31m [0m   [2m 18 [0m[94mfrom[0m[90m [0m[4;96mdatabase[0m[4;96m.[0m[4;96msql[0m[4;96m.[0m[4;96msql_clawbot[0m[90m [0m[94mimport[0m log_message_queue, get_message_queue      [31m [0m
+[31m [0m   [2m 19 [0m[94mfrom[0m[90m [0m[4;96mconfig[0m[90m [0m[94mimport[0m *                                                           [31m [0m
+[31m [0m   [2m 20 [0m                                                                               [31m [0m
+[31m [0m                                                                                      [31m [0m
+[31m [0m [2m/app/agents/component/[0m[1mapproval_database_agent.py[0m:6 in <module>                       [31m [0m
+[31m [0m                                                                                      [31m [0m
+[31m [0m   [2m  3 [0m[94mfrom[0m[90m [0m[4;96mtyping[0m[90m [0m[94mimport[0m Dict, Any                                                   [31m [0m
+[31m [0m   [2m  4 [0m[94mfrom[0m[90m [0m[4;96mlanggraph[0m[4;96m.[0m[4;96mtypes[0m[90m [0m[94mimport[0m interrupt                                          [31m [0m
+[31m [0m   [2m  5 [0m[94mfrom[0m[90m [0m[4;96mdatabase[0m[4;96m.[0m[4;96mneo4j_conn[0m[90m [0m[94mimport[0m _neo4j_conn                                    [31m [0m
+[31m [0m [31m❱ [0m  6 [1;4;94mfrom[0m[1;4;90m [0m[1;4;96mcore[0m[1;4;96m.[0m[1;4;96mmemory_manager[0m[1;4;90m [0m[1;4;94mimport[0m[1;4m save_long_memory[0m                               [31m [0m
+[31m [0m   [2m  7 [0m[94mfrom[0m[90m [0m[4;96mcore[0m[4;96m.[0m[4;96msecurity[0m[90m [0m[94mimport[0m data_desensitize                                     [31m [0m
+[31m [0m   [2m  8 [0m[94mfrom[0m[90m [0m[4;96magents[0m[4;96m.[0m[4;96mcomponent[0m[4;96m.[0m[4;96mapproval_workflow_agent[0m[90m [0m[94mimport[0m log_to_sqlite, update_log [31m [0m
+[31m [0m   [2m  9 [0m                                                                               [31m [0m
+[31m [0m                                                                                      [31m [0m
+[31m [0m [2m/app/core/[0m[1mmemory_manager.py[0m:42 in <module>                                           [31m [0m
+[31m [0m                                                                                      [31m [0m
+[31m [0m   [2m39 [0m[2m│   [0mconn.close()                                                                [31m [0m
+[31m [0m   [2m40 [0m[2m│   [0m[94mreturn[0m res                                                                  [31m [0m
+[31m [0m   [2m41 [0m                                                                                [31m [0m
+[31m [0m [31m❱ [0m42 [1;4minit_long_memory()[0m                                                              [31m [0m
+[31m [0m   [2m43 [0m                                                                                [31m [0m
+[31m [0m                                                                                      [31m [0m
+[31m [0m [2m/app/core/[0m[1mmemory_manager.py[0m:19 in init_long_memory                                   [31m [0m
+[31m [0m                                                                                      [31m [0m
+[31m [0m   [2m16 [0m                                                                                [31m [0m
+[31m [0m   [2m17 [0m[2m# 长期记忆(SQLite持久化)[0m                                                        [31m [0m
+[31m [0m   [2m18 [0m[94mdef[0m[90m [0m[92minit_long_memory[0m():                                                         [31m [0m
+[31m [0m [31m❱ [0m19 [2m│   [0mconn = [1;4msqlite3.connect(MEMORY_DB)[0m                                           [31m [0m
+[31m [0m   [2m20 [0m[2m│   [0mc = conn.cursor()                                                           [31m [0m
+[31m [0m   [2m21 [0m[2m│   [0mc.execute([33m'''[0m[33mCREATE TABLE IF NOT EXISTS long_memory [0m                        [31m [0m
+[31m [0m   [2m22 [0m[2;33m│   │   │   │   [0m[33m(user TEXT,content TEXT,time TEXT)[0m[33m'''[0m)                          [31m [0m
+[31m────────────────────────────────────────────────────────────────────────────────────────[0m
+[1;91mOperationalError: [0munable to open database file
+[31m──[0m[31m────────────────────────[0m[31m [0m[1;31mTraceback [0m[1;2;31m(most recent call last)[0m[31m [0m[31m─────────────────────────[0m[31m──[0m
+[31m [0m [2m/usr/local/lib/python3.13/site-packages/streamlit/runtime/scriptrunner/[0m[1mexec_code.py[0m: [31m [0m
+[31m [0m 129 in exec_func_with_error_handling                                                 [31m [0m
+[31m [0m                                                                                      [31m [0m
+[31m [0m [2m/usr/local/lib/python3.13/site-packages/streamlit/runtime/scriptrunner/[0m[1mscript_runner[0m [31m [0m
+[31m [0m [1m.py[0m:689 in code_to_exec                                                              [31m [0m
+[31m [0m                                                                                      [31m [0m
+[31m [0m [2m/app/[0m[1mapp.py[0m:2 in <module>                                                            [31m [0m
+[31m [0m                                                                                      [31m [0m
+[31m [0m   [2m  1 [0m[94mimport[0m[90m [0m[4;96mstreamlit[0m[90m [0m[94mas[0m[90m [0m[4;96mst[0m                                                         [31m [0m
+[31m [0m [31m❱ [0m  2 [1;4;94mfrom[0m[1;4;90m [0m[1;4;96mmain_graph[0m[1;4;90m [0m[1;4;94mimport[0m[1;4m graph[0m                                                   [31m [0m
+[31m [0m   [2m  3 [0m[94mfrom[0m[90m [0m[4;96mdatabase[0m[4;96m.[0m[4;96mchroma_conn[0m[90m [0m[94mimport[0m upload_file_to_vector                         [31m [0m
+[31m [0m   [2m  4 [0m[94mfrom[0m[90m [0m[4;96mdatabase[0m[4;96m.[0m[4;96mneo4j_conn[0m[90m [0m[94mimport[0m batch_create_triples, batch_import_triples_wit [31m [0m
+[31m [0m   [2m  5 [0m[94mfrom[0m[90m [0m[4;96mcore[0m[4;96m.[0m[4;96mcleaner[0m[90m [0m[94mimport[0m clean_filename                                        [31m [0m
+[31m [0m                                                                                      [31m [0m
+[31m [0m [2m/app/[0m[1mmain_graph.py[0m:4 in <module>                                                     [31m [0m
+[31m [0m                                                                                      [31m [0m
+[31m [0m   [2m 1 [0m[94mimport[0m[90m [0m[4;96mos[0m                                                                       [31m [0m
+[31m [0m   [2m 2 [0m[94mfrom[0m[90m [0m[4;96mlanggraph[0m[4;96m.[0m[4;96mgraph[0m[90m [0m[94mimport[0m StateGraph, END                                     [31m [0m
+[31m [0m   [2m 3 [0m[94mfrom[0m[90m [0m[4;96mlanggraph[0m[4;96m.[0m[4;96mcheckpoint[0m[4;96m.[0m[4;96mmemory[0m[90m [0m[94mimport[0m MemorySaver                             [31m [0m
+[31m [0m [31m❱ [0m 4 [1;4;94mfrom[0m[1;4;90m [0m[1;4;96magents[0m[1;4;96m.[0m[1;4;96msupervisor_agent[0m[1;4;90m [0m[1;4;94mimport[0m[1;4m AgentState, semantic_supervisor_node[0m        [31m [0m
+[31m [0m   [2m 5 [0m[94mfrom[0m[90m [0m[4;96magents[0m[4;96m.[0m[4;96mrag_agent[0m[90m [0m[94mimport[0m rag_agent_node                                     [31m [0m
+[31m [0m   [2m 6 [0m[94mfrom[0m[90m [0m[4;96magents[0m[4;96m.[0m[4;96mmultimodal_agent[0m[90m [0m[94mimport[0m multimodal_agent_node                       [31m [0m
+[31m [0m   [2m 7 [0m[94mfrom[0m[90m [0m[4;96magents[0m[4;96m.[0m[4;96mtool_agent[0m[90m [0m[94mimport[0m tool_agent_node                                   [31m [0m
+[31m [0m                                                                                      [31m [0m
+[31m [0m [2m/app/agents/[0m[1msupervisor_agent.py[0m:4 in <module>                                        [31m [0m
+[31m [0m                                                                                      [31m [0m
+[31m [0m   [2m 1 [0m[94mfrom[0m[90m [0m[4;96mtyping[0m[90m [0m[94mimport[0m TypedDict, Optional                                          [31m [0m
+[31m [0m   [2m 2 [0m[94mfrom[0m[90m [0m[4;96mcore[0m[4;96m.[0m[4;96msecurity[0m[90m [0m[94mimport[0m check_auth, rate_limit                                [31m [0m
+[31m [0m   [2m 3 [0m[94mfrom[0m[90m [0m[4;96mcore[0m[4;96m.[0m[4;96mcleaner[0m[90m [0m[94mimport[0m clean_text                                             [31m [0m
+[31m [0m [31m❱ [0m 4 [1;4;94mfrom[0m[1;4;90m [0m[1;4;96mhermes[0m[1;4;96m.[0m[1;4;96mhermes_integration[0m[1;4;90m [0m[1;4;94mimport[0m[1;4m get_hermes_multi_agent_bridge[0m             [31m [0m
+[31m [0m   [2m 5 [0m                                                                                [31m [0m
+[31m [0m   [2m 6 [0m[94mclass[0m[90m [0m[4;92mAgentState[0m(TypedDict):                                                    [31m [0m
+[31m [0m   [2m 7 [0m[2m│   [0muser: [96mstr[0m                                                                   [31m [0m
+[31m [0m                                                                                      [31m [0m
+[31m [0m [2m/app/hermes/[0m[1mhermes_integration.py[0m:17 in <module>                                     [31m [0m
+[31m [0m                                                                                      [31m [0m
+[31m [0m   [2m 14 [0m[94mfrom[0m[90m [0m[4;96mpydantic[0m[90m [0m[94mimport[0m BaseModel                                                 [31m [0m
+[31m [0m   [2m 15 [0m[94mfrom[0m[90m [0m[4;96mcontextlib[0m[90m [0m[94mimport[0m asynccontextmanager                                     [31m [0m
+[31m [0m   [2m 16 [0m[94mfrom[0m[90m [0m[4;96mllama_index[0m[4;96m.[0m[4;96mllms[0m[4;96m.[0m[4;96mollama[0m[90m [0m[94mimport[0m Ollama                                     [31m [0m
+[31m [0m [31m❱ [0m 17 [1;4;94mfrom[0m[1;4;90m [0m[1;4;96magents[0m[1;4;96m.[0m[1;4;96mcomponent[0m[1;4;96m.[0m[1;4;96mapproval_database_agent[0m[1;4;90m [0m[1;4;94mimport[0m[1;4m handle_delete_kg[0m          [31m [0m
+[31m [0m   [2m 18 [0m[94mfrom[0m[90m [0m[4;96mdatabase[0m[4;96m.[0m[4;96msql[0m[4;96m.[0m[4;96msql_clawbot[0m[90m [0m[94mimport[0m log_message_queue, get_message_queue      [31m [0m
+[31m [0m   [2m 19 [0m[94mfrom[0m[90m [0m[4;96mconfig[0m[90m [0m[94mimport[0m *                                                           [31m [0m
+[31m [0m   [2m 20 [0m                                                                               [31m [0m
+[31m [0m                                                                                      [31m [0m
+[31m [0m [2m/app/agents/component/[0m[1mapproval_database_agent.py[0m:6 in <module>                       [31m [0m
+[31m [0m                                                                                      [31m [0m
+[31m [0m   [2m  3 [0m[94mfrom[0m[90m [0m[4;96mtyping[0m[90m [0m[94mimport[0m Dict, Any                                                   [31m [0m
+[31m [0m   [2m  4 [0m[94mfrom[0m[90m [0m[4;96mlanggraph[0m[4;96m.[0m[4;96mtypes[0m[90m [0m[94mimport[0m interrupt                                          [31m [0m
+[31m [0m   [2m  5 [0m[94mfrom[0m[90m [0m[4;96mdatabase[0m[4;96m.[0m[4;96mneo4j_conn[0m[90m [0m[94mimport[0m _neo4j_conn                                    [31m [0m
+[31m [0m [31m❱ [0m  6 [1;4;94mfrom[0m[1;4;90m [0m[1;4;96mcore[0m[1;4;96m.[0m[1;4;96mmemory_manager[0m[1;4;90m [0m[1;4;94mimport[0m[1;4m save_long_memory[0m                               [31m [0m
+[31m [0m   [2m  7 [0m[94mfrom[0m[90m [0m[4;96mcore[0m[4;96m.[0m[4;96msecurity[0m[90m [0m[94mimport[0m data_desensitize                                     [31m [0m
+[31m [0m   [2m  8 [0m[94mfrom[0m[90m [0m[4;96magents[0m[4;96m.[0m[4;96mcomponent[0m[4;96m.[0m[4;96mapproval_workflow_agent[0m[90m [0m[94mimport[0m log_to_sqlite, update_log [31m [0m
+[31m [0m   [2m  9 [0m                                                                               [31m [0m
+[31m [0m                                                                                      [31m [0m
+[31m [0m [2m/app/core/[0m[1mmemory_manager.py[0m:42 in <module>                                           [31m [0m
+[31m [0m                                                                                      [31m [0m
+[31m [0m   [2m39 [0m[2m│   [0mconn.close()                                                                [31m [0m
+[31m [0m   [2m40 [0m[2m│   [0m[94mreturn[0m res                                                                  [31m [0m
+[31m [0m   [2m41 [0m                                                                                [31m [0m
+[31m [0m [31m❱ [0m42 [1;4minit_long_memory()[0m                                                              [31m [0m
+[31m [0m   [2m43 [0m                                                                                [31m [0m
+[31m [0m                                                                                      [31m [0m
+[31m [0m [2m/app/core/[0m[1mmemory_manager.py[0m:19 in init_long_memory                                   [31m [0m
+[31m [0m                                                                                      [31m [0m
+[31m [0m   [2m16 [0m                                                                                [31m [0m
+[31m [0m   [2m17 [0m[2m# 长期记忆(SQLite持久化)[0m                                                        [31m [0m
+[31m [0m   [2m18 [0m[94mdef[0m[90m [0m[92minit_long_memory[0m():                                                         [31m [0m
+[31m [0m [31m❱ [0m19 [2m│   [0mconn = [1;4msqlite3.connect(MEMORY_DB)[0m                                           [31m [0m
+[31m [0m   [2m20 [0m[2m│   [0mc = conn.cursor()                                                           [31m [0m
+[31m [0m   [2m21 [0m[2m│   [0mc.execute([33m'''[0m[33mCREATE TABLE IF NOT EXISTS long_memory [0m                        [31m [0m
+[31m [0m   [2m22 [0m[2;33m│   │   │   │   [0m[33m(user TEXT,content TEXT,time TEXT)[0m[33m'''[0m)                          [31m [0m
+[31m────────────────────────────────────────────────────────────────────────────────────────[0m
+[1;91mOperationalError: [0munable to open database file
+  Stopping...
+
+Collecting usage statistics. To deactivate, set browser.gatherUsageStats to false.
+
+
+  You can now view your Streamlit app in your browser.
+
+  Local URL: http://localhost:8501
+  Network URL: http://172.18.0.4:8501
+  External URL: http://122.10.198.79:8501
+
+==================================================================
+流程图已保存至: /data/main_graph_flow.png
+[31m──[0m[31m────────────────────────[0m[31m [0m[1;31mTraceback [0m[1;2;31m(most recent call last)[0m[31m [0m[31m─────────────────────────[0m[31m──[0m
+[31m [0m [2m/usr/local/lib/python3.13/site-packages/streamlit/runtime/scriptrunner/[0m[1mexec_code.py[0m: [31m [0m
+[31m [0m 129 in exec_func_with_error_handling                                                 [31m [0m
+[31m [0m                                                                                      [31m [0m
+[31m [0m [2m/usr/local/lib/python3.13/site-packages/streamlit/runtime/scriptrunner/[0m[1mscript_runner[0m [31m [0m
+[31m [0m [1m.py[0m:689 in code_to_exec                                                              [31m [0m
+[31m [0m                                                                                      [31m [0m
+[31m [0m [2m/app/[0m[1mapp.py[0m:27 in <module>                                                           [31m [0m
+[31m [0m                                                                                      [31m [0m
+[31m [0m   [2m 24 [0m[2m# 加载环境配置[0m                                                                 [31m [0m
+[31m [0m   [2m 25 [0mload_dotenv()                                                                  [31m [0m
+[31m [0m   [2m 26 [0m                                                                               [31m [0m
+[31m [0m [31m❱ [0m 27 [1;4mnest_asyncio.apply()[0m                                                           [31m [0m
+[31m [0m   [2m 28 [0m                                                                               [31m [0m
+[31m [0m   [2m 29 [0m[2m# 页面配置[0m                                                                     [31m [0m
+[31m [0m   [2m 30 [0mst.set_page_config(page_title=[33m"[0m[33m企业多Agent智能平台[0m[33m"[0m, layout=[33m"[0m[33mwide[0m[33m"[0m)            [31m [0m
+[31m [0m                                                                                      [31m [0m
+[31m [0m [2m/usr/local/lib/python3.13/site-packages/[0m[1mnest_asyncio.py[0m:18 in apply                  [31m [0m
+[31m [0m                                                                                      [31m [0m
+[31m [0m   [2m 15 [0m[2m│   [0m_patch_policy()                                                            [31m [0m
+[31m [0m   [2m 16 [0m[2m│   [0m_patch_tornado()                                                           [31m [0m
+[31m [0m   [2m 17 [0m[2m│   [0m                                                                           [31m [0m
+[31m [0m [31m❱ [0m 18 [2m│   [0mloop = loop [95mor[0m [1;4masyncio.get_event_loop()[0m                                    [31m [0m
+[31m [0m   [2m 19 [0m[2m│   [0m_patch_loop(loop)                                                          [31m [0m
+[31m [0m   [2m 20 [0m                                                                               [31m [0m
+[31m [0m   [2m 21 [0m                                                                               [31m [0m
+[31m [0m                                                                                      [31m [0m
+[31m [0m [2m/usr/local/lib/python3.13/site-packages/[0m[1mnest_asyncio.py[0m:40 in _get_event_loop        [31m [0m
+[31m [0m                                                                                      [31m [0m
+[31m [0m   [2m 37 [0m[2m│   [0m[94mdef[0m[90m [0m[92m_get_event_loop[0m(stacklevel=[94m3[0m):                                         [31m [0m
+[31m [0m   [2m 38 [0m[2m│   │   [0mloop = events._get_running_loop()                                      [31m [0m
+[31m [0m   [2m 39 [0m[2m│   │   [0m[94mif[0m loop [95mis[0m [94mNone[0m:                                                       [31m [0m
+[31m [0m [31m❱ [0m 40 [2m│   │   │   [0mloop = [1;4mevents.get_event_loop_policy().get_event_loop()[0m             [31m [0m
+[31m [0m   [2m 41 [0m[2m│   │   [0m[94mreturn[0m loop                                                            [31m [0m
+[31m [0m   [2m 42 [0m[2m│   [0m                                                                           [31m [0m
+[31m [0m   [2m 43 [0m[2m│   [0m[2m# Use module level _current_tasks, all_tasks and patch run method.[0m         [31m [0m
+[31m [0m                                                                                      [31m [0m
+[31m [0m [2m/usr/local/lib/python3.13/site-packages/[0m[1mnest_asyncio.py[0m:67 in get_event_loop         [31m [0m
+[31m [0m                                                                                      [31m [0m
+[31m [0m   [2m 64 [0m[2m│   [0m[94mdef[0m[90m [0m[92mget_event_loop[0m([96mself[0m):                                                  [31m [0m
+[31m [0m   [2m 65 [0m[2m│   │   [0m[94mif[0m [96mself[0m._local._loop [95mis[0m [94mNone[0m:                                          [31m [0m
+[31m [0m   [2m 66 [0m[2m│   │   │   [0mloop = [96mself[0m.new_event_loop()                                       [31m [0m
+[31m [0m [31m❱ [0m 67 [2m│   │   │   [0m[1;4m_patch_loop(loop)[0m                                                  [31m [0m
+[31m [0m   [2m 68 [0m[2m│   │   │   [0m[96mself[0m.set_event_loop(loop)                                          [31m [0m
+[31m [0m   [2m 69 [0m[2m│   │   [0m[94mreturn[0m [96mself[0m._local._loop                                               [31m [0m
+[31m [0m   [2m 70 [0m                                                                               [31m [0m
+[31m [0m                                                                                      [31m [0m
+[31m [0m [2m/usr/local/lib/python3.13/site-packages/[0m[1mnest_asyncio.py[0m:193 in _patch_loop           [31m [0m
+[31m [0m                                                                                      [31m [0m
+[31m [0m   [2m190 [0m[2m│   [0m[94mif[0m [96mhasattr[0m(loop, [33m'[0m[33m_nest_patched[0m[33m'[0m):                                         [31m [0m
+[31m [0m   [2m191 [0m[2m│   │   [0m[94mreturn[0m                                                                 [31m [0m
+[31m [0m   [2m192 [0m[2m│   [0m[94mif[0m [95mnot[0m [96misinstance[0m(loop, asyncio.BaseEventLoop):                            [31m [0m
+[31m [0m [31m❱ [0m193 [2m│   │   [0m[1;4;94mraise[0m[1;4m [0m[1;4;96mValueError[0m[1;4m([0m[1;4;33m'[0m[1;4;33mCan[0m[1;4;33m\'[0m[1;4;33mt patch loop of type [0m[1;4;33m%s[0m[1;4;33m'[0m[1;4m % [0m[1;4;96mtype[0m[1;4m(loop))[0m          [31m [0m
+[31m [0m   [2m194 [0m[2m│   [0m[96mcls[0m = loop.[91m__class__[0m                                                       [31m [0m
+[31m [0m   [2m195 [0m[2m│   [0m[96mcls[0m.run_forever = run_forever                                              [31m [0m
+[31m [0m   [2m196 [0m[2m│   [0m[96mcls[0m.run_until_complete = run_until_complete                                [31m [0m
+[31m────────────────────────────────────────────────────────────────────────────────────────[0m
+[1;91mValueError: [0mCan't patch loop of type [1m<[0m[1;95mclass[0m[39m [0m[32m'uvloop.Loop'[0m[1m>[0m
+[31m──[0m[31m────────────────────────[0m[31m [0m[1;31mTraceback [0m[1;2;31m(most recent call last)[0m[31m [0m[31m─────────────────────────[0m[31m──[0m
+[31m [0m [2m/usr/local/lib/python3.13/site-packages/streamlit/runtime/scriptrunner/[0m[1mexec_code.py[0m: [31m [0m
+[31m [0m 129 in exec_func_with_error_handling                                                 [31m [0m
+[31m [0m                                                                                      [31m [0m
+[31m [0m [2m/usr/local/lib/python3.13/site-packages/streamlit/runtime/scriptrunner/[0m[1mscript_runner[0m [31m [0m
+[31m [0m [1m.py[0m:689 in code_to_exec                                                              [31m [0m
+[31m [0m                                                                                      [31m [0m
+[31m [0m [2m/app/[0m[1mapp.py[0m:27 in <module>                                                           [31m [0m
+[31m [0m                                                                                      [31m [0m
+[31m [0m   [2m 24 [0m[2m# 加载环境配置[0m                                                                 [31m [0m
+[31m [0m   [2m 25 [0mload_dotenv()                                                                  [31m [0m
+[31m [0m   [2m 26 [0m                                                                               [31m [0m
+[31m [0m [31m❱ [0m 27 [1;4mnest_asyncio.apply()[0m                                                           [31m [0m
+[31m [0m   [2m 28 [0m                                                                               [31m [0m
+[31m [0m   [2m 29 [0m[2m# 页面配置[0m                                                                     [31m [0m
+[31m [0m   [2m 30 [0mst.set_page_config(page_title=[33m"[0m[33m企业多Agent智能平台[0m[33m"[0m, layout=[33m"[0m[33mwide[0m[33m"[0m)            [31m [0m
+[31m [0m                                                                                      [31m [0m
+[31m [0m [2m/usr/local/lib/python3.13/site-packages/[0m[1mnest_asyncio.py[0m:18 in apply                  [31m [0m
+[31m [0m                                                                                      [31m [0m
+[31m [0m   [2m 15 [0m[2m│   [0m_patch_policy()                                                            [31m [0m
+[31m [0m   [2m 16 [0m[2m│   [0m_patch_tornado()                                                           [31m [0m
+[31m [0m   [2m 17 [0m[2m│   [0m                                                                           [31m [0m
+[31m [0m [31m❱ [0m 18 [2m│   [0mloop = loop [95mor[0m [1;4masyncio.get_event_loop()[0m                                    [31m [0m
+[31m [0m   [2m 19 [0m[2m│   [0m_patch_loop(loop)                                                          [31m [0m
+[31m [0m   [2m 20 [0m                                                                               [31m [0m
+[31m [0m   [2m 21 [0m                                                                               [31m [0m
+[31m [0m                                                                                      [31m [0m
+[31m [0m [2m/usr/local/lib/python3.13/site-packages/[0m[1mnest_asyncio.py[0m:40 in _get_event_loop        [31m [0m
+[31m [0m                                                                                      [31m [0m
+[31m [0m   [2m 37 [0m[2m│   [0m[94mdef[0m[90m [0m[92m_get_event_loop[0m(stacklevel=[94m3[0m):                                         [31m [0m
+[31m [0m   [2m 38 [0m[2m│   │   [0mloop = events._get_running_loop()                                      [31m [0m
+[31m [0m   [2m 39 [0m[2m│   │   [0m[94mif[0m loop [95mis[0m [94mNone[0m:                                                       [31m [0m
+[31m [0m [31m❱ [0m 40 [2m│   │   │   [0mloop = [1;4mevents.get_event_loop_policy().get_event_loop()[0m             [31m [0m
+[31m [0m   [2m 41 [0m[2m│   │   [0m[94mreturn[0m loop                                                            [31m [0m
+[31m [0m   [2m 42 [0m[2m│   [0m                                                                           [31m [0m
+[31m [0m   [2m 43 [0m[2m│   [0m[2m# Use module level _current_tasks, all_tasks and patch run method.[0m         [31m [0m
+[31m [0m                                                                                      [31m [0m
+[31m [0m [2m/usr/local/lib/python3.13/site-packages/[0m[1mnest_asyncio.py[0m:67 in get_event_loop         [31m [0m
+[31m [0m                                                                                      [31m [0m
+[31m [0m   [2m 64 [0m[2m│   [0m[94mdef[0m[90m [0m[92mget_event_loop[0m([96mself[0m):                                                  [31m [0m
+[31m [0m   [2m 65 [0m[2m│   │   [0m[94mif[0m [96mself[0m._local._loop [95mis[0m [94mNone[0m:                                          [31m [0m
+[31m [0m   [2m 66 [0m[2m│   │   │   [0mloop = [96mself[0m.new_event_loop()                                       [31m [0m
+[31m [0m [31m❱ [0m 67 [2m│   │   │   [0m[1;4m_patch_loop(loop)[0m                                                  [31m [0m
+[31m [0m   [2m 68 [0m[2m│   │   │   [0m[96mself[0m.set_event_loop(loop)                                          [31m [0m
+[31m [0m   [2m 69 [0m[2m│   │   [0m[94mreturn[0m [96mself[0m._local._loop                                               [31m [0m
+[31m [0m   [2m 70 [0m                                                                               [31m [0m
+[31m [0m                                                                                      [31m [0m
+[31m [0m [2m/usr/local/lib/python3.13/site-packages/[0m[1mnest_asyncio.py[0m:193 in _patch_loop           [31m [0m
+[31m [0m                                                                                      [31m [0m
+[31m [0m   [2m190 [0m[2m│   [0m[94mif[0m [96mhasattr[0m(loop, [33m'[0m[33m_nest_patched[0m[33m'[0m):                                         [31m [0m
+[31m [0m   [2m191 [0m[2m│   │   [0m[94mreturn[0m                                                                 [31m [0m
+[31m [0m   [2m192 [0m[2m│   [0m[94mif[0m [95mnot[0m [96misinstance[0m(loop, asyncio.BaseEventLoop):                            [31m [0m
+[31m [0m [31m❱ [0m193 [2m│   │   [0m[1;4;94mraise[0m[1;4m [0m[1;4;96mValueError[0m[1;4m([0m[1;4;33m'[0m[1;4;33mCan[0m[1;4;33m\'[0m[1;4;33mt patch loop of type [0m[1;4;33m%s[0m[1;4;33m'[0m[1;4m % [0m[1;4;96mtype[0m[1;4m(loop))[0m          [31m [0m
+[31m [0m   [2m194 [0m[2m│   [0m[96mcls[0m = loop.[91m__class__[0m                                                       [31m [0m
+[31m [0m   [2m195 [0m[2m│   [0m[96mcls[0m.run_forever = run_forever                                              [31m [0m
+[31m [0m   [2m196 [0m[2m│   [0m[96mcls[0m.run_until_complete = run_until_complete                                [31m [0m
+[31m────────────────────────────────────────────────────────────────────────────────────────[0m
+[1;91mValueError: [0mCan't patch loop of type [1m<[0m[1;95mclass[0m[39m [0m[32m'uvloop.Loop'[0m[1m>[0m

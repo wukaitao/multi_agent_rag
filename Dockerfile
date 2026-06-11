@@ -29,30 +29,27 @@ COPY . .
 RUN pip install --no-cache-dir cython==3.2.5 pyarmor==9.2.5
 
 # 关键：加 set -e 防止静默失败，加 echo 调试输出
-# RUN echo "========== FINAL_PROTECT_CODE: ${FINAL_PROTECT_CODE}; $FINAL_PROTECT_CODE =========="
-# RUN set -e; \
-#     echo "===== DEBUG: FINAL_PROTECT_CODE = [${FINAL_PROTECT_CODE}] ====="; \
-#     if [ "${FINAL_PROTECT_CODE}" = "Pyarmor" ]; then \
-#         echo "Running Pyarmor encryption..."; \
-#         pyarmor gen -r -O dist agents core hermes database tools app.py config.py main_graph.py \
-#             --exclude ".venv" --exclude ".venv_win" --exclude "venv" --exclude "__pycache__" --exclude "dist"; \
-#         echo "===== DEBUG: dist generated successfully ====="; \
-#         ls -la /app/dist; \
-#     elif [ "${FINAL_PROTECT_CODE}" = "Cython" ]; then \
-#         echo "Running Cython compile..."; \
-#         python setup.py build_ext --inplace; \
-#     elif [ "${FINAL_PROTECT_CODE}" = "Hybrid" ]; then \
-#         echo "Running Hybrid mode..."; \
-#         python setup.py build_ext --inplace && \
-#         pyarmor gen -r -O dist agents core hermes database tools app.py config.py main_graph.py \
-#             --exclude ".venv" --exclude ".venv_win" --exclude "__pycache__" --exclude "dist"; \
-#     else \
-#         echo "WARNING: FINAL_PROTECT_CODE not set, copying raw code to dist"; \
-#         mkdir -p dist && cp -r ./* dist/; \
-#     fi
-# 上面代码块因 $PROTECT_CODE 取值不稳定无法实现, 暂固定使用 Pyarmor 加密方法
-RUN pyarmor gen -r -O dist agents core hermes database tools app.py config.py main_graph.py --exclude ".venv" --exclude ".venv_win" --exclude "venv" --exclude "__pycache__" --exclude "dist";
-RUN echo "===== DEBUG: dist generated successfully =====";
+RUN echo "========== FINAL_PROTECT_CODE: ${FINAL_PROTECT_CODE}; $FINAL_PROTECT_CODE =========="
+RUN set -e; \
+    echo "===== DEBUG: FINAL_PROTECT_CODE = [${FINAL_PROTECT_CODE}] ====="; \
+    if [ "${FINAL_PROTECT_CODE}" = "Pyarmor" ]; then \
+        echo "Running Pyarmor encryption..."; \
+        pyarmor gen -r -O dist agents core hermes database tools app.py config.py main_graph.py \
+            --exclude ".venv" --exclude ".venv_win" --exclude "venv" --exclude "__pycache__" --exclude "dist"; \
+        echo "===== DEBUG: dist generated successfully ====="; \
+        ls -la /app/dist; \
+    elif [ "${FINAL_PROTECT_CODE}" = "Cython" ]; then \
+        echo "Running Cython compile..."; \
+        python setup.py build_ext --inplace; \
+    elif [ "${FINAL_PROTECT_CODE}" = "Hybrid" ]; then \
+        echo "Running Hybrid mode..."; \
+        python setup.py build_ext --inplace && \
+        pyarmor gen -r -O dist agents core hermes database tools app.py config.py main_graph.py \
+            --exclude ".venv" --exclude ".venv_win" --exclude "__pycache__" --exclude "dist"; \
+    else \
+        echo "WARNING: FINAL_PROTECT_CODE not set, copying raw code to dist"; \
+        mkdir -p dist && cp -r agents core hermes database tools app.py config.py main_graph.py dist/; \
+    fi
 
 # 第二阶段: 运行阶段
 FROM python:3.13.12-slim
@@ -71,19 +68,22 @@ COPY --from=builder /usr/local/bin /usr/local/bin
 
 # 复制 Cython Pyarmor 后的代码
 COPY --from=builder /app/dist ./
+
 # 复制 配置文件
-COPY -supervisord.conf /etc/supervisor/conf.d/supervisord.conf
+COPY supervisord.conf /etc/supervisor/conf.d/supervisord.conf
 
 # 创建非 root 用户
-RUN useradd -m -u 1000 appuser && chown -R appuser:appuser /app
+RUN useradd -m -u 1000 appuser && mkdir -p /data &&  chown -R appuser:appuser /app /data
 USER appuser
 
 # 健康检查
-HEALTHCHECK --interval=30s --timeout=10s --start-period=5s --retries=3 \
-    CMD curl -f http://localhost:8001/health || exit 1
+# HEALTHCHECK --interval=30s --timeout=10s --start-period=20s --retries=3 \
+#     CMD curl -f http://localhost:8001/health || exit 1
 
 # 暴露端口
 EXPOSE 8000 8001 8501
 
 # 启动命令(使用 suppervisor 管理多个服务)
 CMD ["supervisord", "-c", "/etc/supervisor/conf.d/supervisord.conf"]
+# 直接前台运行 hermes-gateway 服务
+# CMD ["python", "-m", "uvicorn", "app:gateway_app", "--host", "0.0.0.0", "--port", "8001"]

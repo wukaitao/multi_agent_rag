@@ -14,7 +14,7 @@ from neo4j_graphrag.experimental.components.entity_relation_extractor import ERE
 class Neo4jConnection:
     def __init__(self):
         self.driver = GraphDatabase.driver(
-            NEO4J_URL,
+            NEO4J_URI,
             auth=(NEO4J_USER, NEO4J_PASSWORD)
         )
 

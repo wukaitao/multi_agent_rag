@@ -42,5 +42,5 @@ docs/
 
 # 其他
 .env*.local
-*.db
-*.sqlite3
+# *.db
+# *.sqlite3

@@ -10,7 +10,7 @@ import re
 def rag_agent_node(state):
     """优化版RAG节点: 多查询融合 + 重排序 + 上下文扩展"""
     print(f"========== RAG 节点 ==========")
-    print(f"NEO4J_URL: {NEO4J_URL}\nLLM_BASE_URL: {LLM_BASE_URL}\nMEMORY_DB:{MEMORY_DB}")
+    print(f"NEO4J_URI: {NEO4J_URI}\nLLM_BASE_URL: {LLM_BASE_URL}\nMEMORY_DB:{MEMORY_DB}")
     query = state["query"]
 
     # === 1. 查询优化: 多角度检索向量 ===

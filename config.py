@@ -1,39 +1,55 @@
 import os
 import sys
+from dotenv import load_dotenv
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 
 # 环境判断
 def is_wsl():
     """ 判断是否在 WSL2 环境"""
     return sys.platform == "linux" and "microsoft" in os.uname().release.lower()
+def is_docker():
+    """判断当前是否运行在 Docker 容器内"""
+    return os.path.exists("./dockerenv")
 def is_windows():
     """ 判断是否在 Windows 环境"""
     return sys.platform == "win32"
+
+# ========== 自动加载对应 env 文件 ==========
+if not is_docker():
+    if is_wsl():
+        # WSL 裸机: 加载 .env.wsl
+        load_dotenv(".env.wsl", override=False)
+    else:
+        # Windows 本地开发: 加载 .env.dev
+        load_dotenv(".env.dev", override=False)
+else:
+    # Docker 环境: compose 已经注入环境变量, 可能不需要加载本地任何 .env
+    load_dotenv(".env.prod", override=False)
 
 # LLM 配置
 LLM_MODEL = "qwen3:0.6b"
 VL_MODEL = "gemma4:e2b"
 EMBED_MODEL = "mxbai-embed-large"
-LLM_BASE_URL = "http://localhost:11434" if not is_wsl() else "http://host.docker.internal:11434"
+LLM_BASE_URL=os.getenv("LLM_BASE_URL", "http://localhost:11434")
 
 # 知识图谱(Neo4j)
-NEO4J_URL = "bolt://localhost:7687" if not is_wsl() else "bolt://192.168.18.104:7687"
-NEO4J_USER = "neo4j"
-NEO4J_PASSWORD = "12345678"
+NEO4J_URI=os.getenv("NEO4J_URI", "bolt://localhost:7687")
+NEO4J_USER=os.getenv("NEO4J_USER", "neo4j")
+NEO4J_PASSWORD=os.getenv("NEO4J_PASSWORD", "")
 # 向量数据库(ChromaDB + SQLite3)
-CHROMA_PATH = "./chroma_db" if not is_wsl() else "/mnt/e/work/AIAgent/multi_agent_rag/chroma_db"
-
+CHROMA_PATH=os.getenv("CHROMA_PATH", "./chroma_db")
 # 安全配置
-SECRET_TOKEN = "admin2026ai"
+SECRET_TOKEN=os.getenv("SECRET_TOKEN", "admin2026ai")
 MAX_REQUEST_PER_MINUTE = 20
 TIME_OUT = 120
 
 # 路径
-DATA_PATH = "./data"
-TEMP_OPATH = "./temp"
-GRAPH_FILE_PATH = "./main_graph_flow.png"
+DATA_PATH=os.getenv("DATA_PATH", "./data")
+TEMP_OPATH=os.getenv("TEMP_OPATH", "./temp")
+GRAPH_FILE_PATH=os.getenv("GRAPH_FILE_PATH", "./main_graph_flow.png")
 # 关系型数据库(SQLite3)
-MEMORY_DB = "./memory/memory.db" if not is_wsl() else "/mnt/e/work/AIAgent/multi_agent_rag/memory/memory.db"
+MEMORY_PATH=os.getenv("MEMORY_PATH", "./memory")
+MEMORY_DB=os.getenv("MEMORY_DB", "./memory/memory.db")
 
 # ModelScope 配置
 MODELSCOPE_MODEL = "Qwen/Qwen-Image"
@@ -64,7 +80,7 @@ ANGET_API_URL = "http://localhost:8000/api/chat"
 ANGET_REPLY_API_URL = "http://localhost:8000/internal/send_reply"
 
 # SKILL 配置
-SKILL_PATH = "~/.hermes/skills" if False else r"\\wsl.localhost\Ubuntu\home\wukai\.hermes\skills"  # 根据实际环境调整
+SKILL_PATH=os.getenv("SKILL_PATH", "~/.hermes/skills")
 
 # ClawBot 微信插件配置
 BOT_BASE_URL = "https://ilinkai.weixin.qq.com"
@@ -72,8 +88,8 @@ BOT_TYPE = "3" # 1-企业微信, 2-个人微信, 3-通用
 BOT_QRCODE_URL = "https://liteapp.weixin.qq.com/"
 NGROK_URL = "https://coleslaw-coziness-unblessed.ngrok-free.dev" # 本地8001内网穿透网址, 废弃(本地 Agent 是通过主动轮询拉取和发送消息与微信 ClawBot 交互, 所以不需要穿透内网供微信 ClawBot 调用)
 NGROK_UR_WEB_INTERFACE= "http://127.0.0.1:40410" # 本地8001内网穿透 Web Interface 界面
-TOKEN_PATH = "./memory/clawbot_token.json" if not is_wsl() else "/mnt/e/work/AIAgent/multi_agent_rag/memory/clawbot_token.json" # 废弃
-QRCODE_STATUS_PATH = "./memory/clawbot_qrcode_status.json" if not is_wsl() else "/mnt/e/work/AIAgent/multi_agent_rag/memory/clawbot_qrcode_status.json"
+TOKEN_PATH=os.getenv("TOKEN_PATH", "./memory/clawbot_token.json")
+QRCODE_STATUS_PATH=os.getenv("QRCODE_STATUS_PATH", "./memory/clawbot_qrcode_status.json")
 
 # KG 增强版 Prompt
 UNIVERSAL_HIGH_PRECISION_PROMPT = """你是专业通用知识图谱三元组抽取专家，擅长从任意非结构化文本中精准提取高质量实体与语义关系。
@@ -110,3 +126,5 @@ UNIVERSAL_HIGH_PRECISION_PROMPT = """你是专业通用知识图谱三元组抽�
 
 os.makedirs(DATA_PATH, exist_ok=True)
 os.makedirs(TEMP_OPATH, exist_ok=True)
+os.makedirs(CHROMA_PATH, exist_ok=True)
+os.makedirs(MEMORY_PATH, exist_ok=True)
