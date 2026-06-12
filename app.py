@@ -24,7 +24,7 @@ import nest_asyncio
 # 加载环境配置
 load_dotenv()
 
-nest_asyncio.apply()
+# nest_asyncio.apply()
 
 # 页面配置
 st.set_page_config(page_title="企业多Agent智能平台", layout="wide")
